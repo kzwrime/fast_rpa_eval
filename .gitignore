@@ -1,0 +1,61 @@
+# ----- Compiled objects and libraries -----
+*.o
+*.obj
+*.lo
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.elf
+
+# ----- Precompiled headers -----
+*.gch
+*.pch
+
+# ----- CUDA / HIP generated files -----
+*.cubin
+*.ptx
+*.fatbin
+*.hsaco
+*.hcc
+
+# ----- Intermediate and temporary files -----
+*.i
+*.ii
+*.s
+*.lst
+*.tmp
+*~
+*.swp
+*.bak
+
+# ----- Build system -----
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
+build/
+_build*/
+out/
+
+# ----- IDE and editor metadata -----
+.vscode/
+.idea/
+*.code-workspace
+*.sln
+*.vcxproj*
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserdata/
+
+# ----- OS generated files -----
+.DS_Store
+Thumbs.db
+# End Generation Here
+
+third_party/
