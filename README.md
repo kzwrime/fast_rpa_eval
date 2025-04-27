@@ -4,7 +4,7 @@ This is an experimental repository for SC25 AE/AD.
 
 # Before Clone
 
-This repository adopts git lfs.
+**Important !!** This repository adopts git lfs.
 
 ```bash
 git lfs install
