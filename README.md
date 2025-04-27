@@ -2,6 +2,17 @@
 
 This is an experimental repository for SC25 AE/AD.
 
+# Before Clone
+
+This repository adopts git lfs.
+
+```bash
+git lfs install
+git clone https://github.com/kzwrime/fast_rpa_eval
+```
+
+Or download ZIP directly.
+
 # Evaluation Setup
 
 Description of the hardware and software environment:
@@ -28,7 +39,8 @@ This experiment has been tested in the following compiler environments:
 - Manually required:
   - Intel MKL (verified version: oneapi 2024.1)
 - Installed via the methods provided below:
-  - Eigen (verified version: eigen-3.3.9)
+  - Eigen (verified version: eigen-3.4.1)
+    - git commit 68f4e58cfacc686583d16cff90361f0b43bc2c1b
   - MAGMA (verified version: magma-2.9.0)
 
 ## Environment Variable Setup
@@ -49,11 +61,13 @@ source /opt/intel/oneapi/mkl/latest/env/vars.sh
     - follow guide: `./scripts/install_magma.md`
 
 ```bash
-# Install eigen-3.3.9 by directly running the script  
+# Install eigen by directly running the script  
 ./scripts/install_eigen.sh
 
-# Install magma-2.9.0. Due to differences in software/hardware environments,  
+# Install magma. Due to differences in software/hardware environments,  
 # please refer to scripts/install_magma.md for manual execution.  
 ```
+
+
 
 

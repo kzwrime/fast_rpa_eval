@@ -17,11 +17,11 @@ fi
 cd ${FR_PROJECT_HOME}/third_party
 
 if [[ ! -d eigen ]]; then
-  wget https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.zip
-  unzip eigen-3.3.9.zip
-  mv eigen-3.3.9 eigen
+  git clone https://gitlab.com/libeigen/eigen.git
 fi
 cd eigen
+# git checkout 3.4
+git checkout 68f4e58cfacc686583d16cff90361f0b43bc2c1b
 if [[ ! -d build ]]; then
   mkdir build
 fi
@@ -29,4 +29,4 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=${FR_PROJECT_HOME}/third_party/local
 make install -j${N_JOBS}
 
-echo "Eigen 3.3.9 installed to ${FR_PROJECT_HOME}/third_party/local"
+echo "Eigen 3.4 installed to ${FR_PROJECT_HOME}/third_party/local"
