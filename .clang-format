@@ -1,0 +1,28 @@
+---
+BasedOnStyle: LLVM
+IndentWidth: 2
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignConsecutiveMacros: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Attach
+BinPackArguments: false
+BinPackParameters: false
+Cpp11BracedListStyle: false
+ColumnLimit: 120 
+IndentPPDirectives: BeforeHash
+NamespaceIndentation: None
+SpaceAfterTemplateKeyword: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyBlock: true
+Standard: Latest
+PenaltyBreakBeforeFirstCallParameter: 0
+...
