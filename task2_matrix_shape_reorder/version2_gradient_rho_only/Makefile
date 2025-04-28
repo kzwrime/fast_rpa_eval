@@ -1,4 +1,10 @@
 # 编译器设置
+ifeq ($(strip $(CXX)),)
+  $(error CXX environment variable is not set. Please export CXX)
+endif
+ifeq ($(strip $(NVCC)),)
+  $(error NVCC environment variable is not set. Please export NVCC)
+endif
 CXX := $(CXX)
 NVCC := $(NVCC)
 
