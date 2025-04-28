@@ -12,17 +12,20 @@ export NVCC=nvcc
 
 SRC_PATH=$(pwd)
 
-cd ./base
+cd ./version1_gradient_rho_only
 ./test_rho.sh 2>&1 | tee ./test_rho.log
 
 cd $SRC_PATH
 
-cd ./opt
+cd ./version2_gradient_rho_only
 ./test_rho.sh 2>&1 | tee ./test_rho.log
 
 cd $SRC_PATH
 
-cat ./base/test_rho.log | grep "[[Result]]" | tee ./base/test_rho.log.csv
-cat ./opt/test_rho.log | grep "[[Result]]" | tee ./opt/test_rho.log.csv
+echo "================================\n"
+
+cat ./version1_gradient_rho_only/test_rho.log | grep "[[Result]]" | tee ./version1_gradient_rho_only/test_rho.log.csv
+echo "--------------------------------"
+cat ./version2_gradient_rho_only/test_rho.log | grep "[[Result]]" | tee ./version2_gradient_rho_only/test_rho.log.csv
 
 echo "Done"

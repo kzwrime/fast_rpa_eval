@@ -1,0 +1,1324 @@
+Testing with ATOM_TILE_SIZE=1
+rm -rf ./build
+g++ -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=1 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho.cpp -o build/evaluate_first_order_rho.cpp.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=1 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho_run.cu -o build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=1 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device.cu -o build/device.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=1 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device_data.cu -o build/device_data.cuo.o
+echo "EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o"
+EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=1 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -o build/evaluate_first_order_rho_run.out build/evaluate_first_order_rho.cpp.o build/evaluate_first_order_rho_run.cuo.o build/device.cuo.o build/device_data.cuo.o
+Running test with ATOM_TILE_SIZE=1
+Initializing device info..., using device 0
+% MAGMA 2.9.0  32-bit magma_int_t, 64-bit pointer.
+% Compiled for CUDA architectures 80
+% CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
+% device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% Mon Apr 28 14:31:13 2025
+MAGMA is using device: 0
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 355558
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 269040
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 18
+n_centers_hartree_potential = 18
+n_atoms = 18
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3164
+n_full_points = 355558
+n_basis = 364
+n_atoms = 18
+n_max_compute_ham = 303
+n_centers_basis_I = 364
+n_max_batch_size = 188
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.877504 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.392481 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.338943 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.372736 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.348160 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.345087 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.353279 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.362495 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.330751 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.357376 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.326656 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 131.195908 ms
+Run ../../fragment_save_bin/case_18 evaluate_first_order_gradient_rho avg time (ms): 13.119591
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 406476
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 311371
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 20
+n_centers_hartree_potential = 20
+n_atoms = 20
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3792
+n_full_points = 406476
+n_basis = 440
+n_atoms = 20
+n_max_compute_ham = 326
+n_centers_basis_I = 440
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 25.094015 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 25.055904 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 22.802431 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.298880 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.299904 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.360319 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.374657 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.388992 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.362368 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.399233 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.340864 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 159.160324 ms
+Run ../../fragment_save_bin/case_20 evaluate_first_order_gradient_rho avg time (ms): 15.916033
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 440306
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 335201
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 22
+n_centers_hartree_potential = 22
+n_atoms = 22
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3796
+n_full_points = 440306
+n_basis = 468
+n_atoms = 22
+n_max_compute_ham = 342
+n_centers_basis_I = 468
+n_max_batch_size = 191
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.913313 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.720673 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.456064 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.507263 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.483711 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.466305 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.530815 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.488832 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.460159 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.035711 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 16.386047 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 163.663879 ms
+Run ../../fragment_save_bin/case_22 evaluate_first_order_gradient_rho avg time (ms): 16.366388
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 491288
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 375883
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 24
+n_centers_hartree_potential = 24
+n_atoms = 24
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4320
+n_full_points = 491288
+n_basis = 544
+n_atoms = 24
+n_max_compute_ham = 358
+n_centers_basis_I = 544
+n_max_batch_size = 185
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 32.127838 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 32.084450 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 32.023552 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.671871 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.486719 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.548161 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.514368 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.531776 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.362816 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.381248 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 19.334145 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 193.823746 ms
+Run ../../fragment_save_bin/case_24 evaluate_first_order_gradient_rho avg time (ms): 19.382374
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 521741
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 393824
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 26
+n_centers_hartree_potential = 26
+n_atoms = 26
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4535
+n_full_points = 521741
+n_basis = 556
+n_atoms = 26
+n_max_compute_ham = 376
+n_centers_basis_I = 556
+n_max_batch_size = 164
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.593376 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.598560 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.585983 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.440384 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.462912 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.415808 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.440384 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.380993 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.442432 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.438335 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.457792 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 204.664825 ms
+Run ../../fragment_save_bin/case_26 evaluate_first_order_gradient_rho avg time (ms): 20.466482
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 555274
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 413771
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 28
+n_centers_hartree_potential = 28
+n_atoms = 28
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4843
+n_full_points = 555274
+n_basis = 584
+n_atoms = 28
+n_max_compute_ham = 376
+n_centers_basis_I = 584
+n_max_batch_size = 195
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 38.237122 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 38.184223 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 38.163456 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.735296 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.336960 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.299072 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.314432 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.314432 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.361536 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.337984 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 23.291904 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 230.433792 ms
+Run ../../fragment_save_bin/case_28 evaluate_first_order_gradient_rho avg time (ms): 23.043379
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 594927
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 440142
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 30
+n_centers_hartree_potential = 30
+n_atoms = 30
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5389
+n_full_points = 594927
+n_basis = 628
+n_atoms = 30
+n_max_compute_ham = 385
+n_centers_basis_I = 628
+n_max_batch_size = 168
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.116768 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.077599 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.887487 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.873728 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.960768 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.960768 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.985344 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.877825 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.857344 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 27.282433 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 27.201536 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 271.797241 ms
+Run ../../fragment_save_bin/case_30 evaluate_first_order_gradient_rho avg time (ms): 27.179724
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 641169
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 484516
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 32
+n_centers_hartree_potential = 32
+n_atoms = 32
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5657
+n_full_points = 641169
+n_basis = 704
+n_atoms = 32
+n_max_compute_ham = 422
+n_centers_basis_I = 704
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 46.374207 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.629280 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.639809 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.640831 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 42.259457 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.953472 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.800896 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.751743 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.648319 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.494720 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.510080 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 307.359741 ms
+Run ../../fragment_save_bin/case_32 evaluate_first_order_gradient_rho avg time (ms): 30.735973
+Run finished.
+[[Result]], 1, 4, case_18, 13.119591
+[[Result]], 1, 4, case_20, 15.916033
+[[Result]], 1, 4, case_22, 16.366388
+[[Result]], 1, 4, case_24, 19.382374
+[[Result]], 1, 4, case_26, 20.466482
+[[Result]], 1, 4, case_28, 23.043379
+[[Result]], 1, 4, case_30, 27.179724
+[[Result]], 1, 4, case_32, 30.735973
+----------------------------------------
+Testing with ATOM_TILE_SIZE=2
+rm -rf ./build
+g++ -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=2 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho.cpp -o build/evaluate_first_order_rho.cpp.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=2 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho_run.cu -o build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=2 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device.cu -o build/device.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=2 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device_data.cu -o build/device_data.cuo.o
+echo "EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o"
+EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=2 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -o build/evaluate_first_order_rho_run.out build/evaluate_first_order_rho.cpp.o build/evaluate_first_order_rho_run.cuo.o build/device.cuo.o build/device_data.cuo.o
+Running test with ATOM_TILE_SIZE=2
+Initializing device info..., using device 0
+% MAGMA 2.9.0  32-bit magma_int_t, 64-bit pointer.
+% Compiled for CUDA architectures 80
+% CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
+% device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% Mon Apr 28 14:31:54 2025
+MAGMA is using device: 0
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 355558
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 269040
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 18
+n_centers_hartree_potential = 18
+n_atoms = 18
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3164
+n_full_points = 355558
+n_basis = 364
+n_atoms = 18
+n_max_compute_ham = 303
+n_centers_basis_I = 364
+n_max_batch_size = 188
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 31.068256 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.583008 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.597120 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.215744 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.667521 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.661377 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.668545 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.726912 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.549761 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.564096 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 18.548737 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 185.586685 ms
+Run ../../fragment_save_bin/case_18 evaluate_first_order_gradient_rho avg time (ms): 18.558668
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 406476
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 311371
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 20
+n_centers_hartree_potential = 20
+n_atoms = 20
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3792
+n_full_points = 406476
+n_basis = 440
+n_atoms = 20
+n_max_compute_ham = 326
+n_centers_basis_I = 440
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.753506 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.725376 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.844481 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.656063 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.681664 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.640703 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.647873 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.744127 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.797953 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 24.094721 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 24.088575 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 239.954941 ms
+Run ../../fragment_save_bin/case_20 evaluate_first_order_gradient_rho avg time (ms): 23.995495
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 440306
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 335201
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 22
+n_centers_hartree_potential = 22
+n_atoms = 22
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3796
+n_full_points = 440306
+n_basis = 468
+n_atoms = 22
+n_max_compute_ham = 342
+n_centers_basis_I = 468
+n_max_batch_size = 191
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.379330 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.315872 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 29.329409 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.346369 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.357632 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.331009 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.356607 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.349440 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 28.333055 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.845184 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 26.319872 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 262.841339 ms
+Run ../../fragment_save_bin/case_22 evaluate_first_order_gradient_rho avg time (ms): 26.284134
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 491288
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 375883
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 24
+n_centers_hartree_potential = 24
+n_atoms = 24
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4320
+n_full_points = 491288
+n_basis = 544
+n_atoms = 24
+n_max_compute_ham = 358
+n_centers_basis_I = 544
+n_max_batch_size = 185
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.809406 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.769985 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.268162 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 33.079296 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 33.186817 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 33.171455 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 33.147903 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 33.046528 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 31.586304 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 31.128576 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 31.279104 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 313.260040 ms
+Run ../../fragment_save_bin/case_24 evaluate_first_order_gradient_rho avg time (ms): 31.326004
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 521741
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 393824
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 26
+n_centers_hartree_potential = 26
+n_atoms = 26
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4535
+n_full_points = 521741
+n_basis = 556
+n_atoms = 26
+n_max_compute_ham = 376
+n_centers_basis_I = 556
+n_max_batch_size = 164
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.511200 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.442719 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.251713 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.384895 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.484222 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.729984 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.719746 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.921471 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.885632 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.518017 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 34.522114 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 346.647552 ms
+Run ../../fragment_save_bin/case_26 evaluate_first_order_gradient_rho avg time (ms): 34.664757
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 555274
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 413771
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 28
+n_centers_hartree_potential = 28
+n_atoms = 28
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4843
+n_full_points = 555274
+n_basis = 584
+n_atoms = 28
+n_max_compute_ham = 376
+n_centers_basis_I = 584
+n_max_batch_size = 195
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 57.090305 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 47.781952 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 47.902721 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 47.776768 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 43.430912 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 38.825985 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.005184 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.111679 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.137280 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.268353 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 39.245823 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 392.049652 ms
+Run ../../fragment_save_bin/case_28 evaluate_first_order_gradient_rho avg time (ms): 39.204964
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 594927
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 440142
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 30
+n_centers_hartree_potential = 30
+n_atoms = 30
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5389
+n_full_points = 594927
+n_basis = 628
+n_atoms = 30
+n_max_compute_ham = 385
+n_centers_basis_I = 628
+n_max_batch_size = 168
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 71.827293 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.697662 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.213696 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.964863 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.992512 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.957695 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.944386 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.944386 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.943359 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.966911 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 44.924927 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 450.608124 ms
+Run ../../fragment_save_bin/case_30 evaluate_first_order_gradient_rho avg time (ms): 45.060814
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 641169
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 484516
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 32
+n_centers_hartree_potential = 32
+n_atoms = 32
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5657
+n_full_points = 641169
+n_basis = 704
+n_atoms = 32
+n_max_compute_ham = 422
+n_centers_basis_I = 704
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 80.142494 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 63.396290 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.874367 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.729984 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.767872 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.738174 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.747391 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.738174 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.172352 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.989056 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.653633 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 509.926392 ms
+Run ../../fragment_save_bin/case_32 evaluate_first_order_gradient_rho avg time (ms): 50.992638
+Run finished.
+[[Result]], 2, 4, case_18, 18.558668
+[[Result]], 2, 4, case_20, 23.995495
+[[Result]], 2, 4, case_22, 26.284134
+[[Result]], 2, 4, case_24, 31.326004
+[[Result]], 2, 4, case_26, 34.664757
+[[Result]], 2, 4, case_28, 39.204964
+[[Result]], 2, 4, case_30, 45.060814
+[[Result]], 2, 4, case_32, 50.992638
+----------------------------------------
+Testing with ATOM_TILE_SIZE=4
+rm -rf ./build
+g++ -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho.cpp -o build/evaluate_first_order_rho.cpp.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho_run.cu -o build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device.cu -o build/device.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device_data.cu -o build/device_data.cuo.o
+echo "EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o"
+EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -o build/evaluate_first_order_rho_run.out build/evaluate_first_order_rho.cpp.o build/evaluate_first_order_rho_run.cuo.o build/device.cuo.o build/device_data.cuo.o
+Running test with ATOM_TILE_SIZE=4
+Initializing device info..., using device 0
+% MAGMA 2.9.0  32-bit magma_int_t, 64-bit pointer.
+% Compiled for CUDA architectures 80
+% CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
+% device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% Mon Apr 28 14:32:42 2025
+MAGMA is using device: 0
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 355558
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 269040
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 18
+n_centers_hartree_potential = 18
+n_atoms = 18
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3164
+n_full_points = 355558
+n_basis = 364
+n_atoms = 18
+n_max_compute_ham = 303
+n_centers_basis_I = 364
+n_max_batch_size = 188
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.550976 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 49.868481 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 49.021954 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.955521 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.604288 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.629889 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.658560 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.857216 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.778368 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.824448 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 30.821377 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 308.978699 ms
+Run ../../fragment_save_bin/case_18 evaluate_first_order_gradient_rho avg time (ms): 30.897869
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 406476
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 311371
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 20
+n_centers_hartree_potential = 20
+n_atoms = 20
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3792
+n_full_points = 406476
+n_basis = 440
+n_atoms = 20
+n_max_compute_ham = 326
+n_centers_basis_I = 440
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 66.404800 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 50.848190 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.145729 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.125248 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 48.183296 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.882626 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.304066 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.281536 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.344002 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.311234 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 41.298943 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 415.568909 ms
+Run ../../fragment_save_bin/case_20 evaluate_first_order_gradient_rho avg time (ms): 41.556892
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 440306
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 335201
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 22
+n_centers_hartree_potential = 22
+n_atoms = 22
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3796
+n_full_points = 440306
+n_basis = 468
+n_atoms = 22
+n_max_compute_ham = 342
+n_centers_basis_I = 468
+n_max_batch_size = 191
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 74.065887 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 65.983711 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.268993 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.450241 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.955070 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.658112 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.623295 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.635586 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.664257 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.622272 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 45.805569 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 458.136566 ms
+Run ../../fragment_save_bin/case_22 evaluate_first_order_gradient_rho avg time (ms): 45.813656
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 491288
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 375883
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 24
+n_centers_hartree_potential = 24
+n_atoms = 24
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4320
+n_full_points = 491288
+n_basis = 544
+n_atoms = 24
+n_max_compute_ham = 358
+n_centers_basis_I = 544
+n_max_batch_size = 185
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 88.743423 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 75.250275 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 54.541313 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.081985 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 54.973438 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 54.952961 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.017471 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 54.938625 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.045120 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.038975 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 54.695934 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 549.999634 ms
+Run ../../fragment_save_bin/case_24 evaluate_first_order_gradient_rho avg time (ms): 54.999962
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 521741
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 393824
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 26
+n_centers_hartree_potential = 26
+n_atoms = 26
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4535
+n_full_points = 521741
+n_basis = 556
+n_atoms = 26
+n_max_compute_ham = 376
+n_centers_basis_I = 556
+n_max_batch_size = 164
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 98.379234 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 84.846397 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 59.714561 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.094463 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.138496 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.172287 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.309505 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.380161 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.318722 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.199936 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 60.409855 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 607.237122 ms
+Run ../../fragment_save_bin/case_26 evaluate_first_order_gradient_rho avg time (ms): 60.723713
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 555274
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 413771
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 28
+n_centers_hartree_potential = 28
+n_atoms = 28
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4843
+n_full_points = 555274
+n_basis = 584
+n_atoms = 28
+n_max_compute_ham = 376
+n_centers_basis_I = 584
+n_max_batch_size = 195
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 105.547745 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 72.479042 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 72.461311 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.751358 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.913155 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.443138 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 69.267456 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.890625 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.475906 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.672508 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 68.384766 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 690.286621 ms
+Run ../../fragment_save_bin/case_28 evaluate_first_order_gradient_rho avg time (ms): 69.028664
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 594927
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 440142
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 30
+n_centers_hartree_potential = 30
+n_atoms = 30
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5389
+n_full_points = 594927
+n_basis = 628
+n_atoms = 30
+n_max_compute_ham = 385
+n_centers_basis_I = 628
+n_max_batch_size = 168
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 112.937088 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 96.544739 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.977150 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.208130 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.158974 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.199936 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 77.144066 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 77.005821 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.261375 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.879875 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 76.137474 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 768.668701 ms
+Run ../../fragment_save_bin/case_30 evaluate_first_order_gradient_rho avg time (ms): 76.866867
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 641169
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 484516
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 32
+n_centers_hartree_potential = 32
+n_atoms = 32
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5657
+n_full_points = 641169
+n_basis = 704
+n_atoms = 32
+n_max_compute_ham = 422
+n_centers_basis_I = 704
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 138.712769 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 87.556862 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 90.248192 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 89.212929 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 90.331139 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 89.462784 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 89.810944 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 89.281532 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 89.730049 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 90.366974 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 90.340355 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 904.326172 ms
+Run ../../fragment_save_bin/case_32 evaluate_first_order_gradient_rho avg time (ms): 90.432617
+Run finished.
+[[Result]], 4, 4, case_18, 30.897869
+[[Result]], 4, 4, case_20, 41.556892
+[[Result]], 4, 4, case_22, 45.813656
+[[Result]], 4, 4, case_24, 54.999962
+[[Result]], 4, 4, case_26, 60.723713
+[[Result]], 4, 4, case_28, 69.028664
+[[Result]], 4, 4, case_30, 76.866867
+[[Result]], 4, 4, case_32, 90.432617
+----------------------------------------
+Testing with ATOM_TILE_SIZE=8
+rm -rf ./build
+g++ -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho.cpp -o build/evaluate_first_order_rho.cpp.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c evaluate_first_order_rho_run.cu -o build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device.cu -o build/device.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -c device_data.cu -o build/device_data.cuo.o
+echo "EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o"
+EVAL_RHO_OBJS = ./build/evaluate_first_order_rho.cpp.o ./build/evaluate_first_order_rho_run.cuo.o
+nvcc -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core -D_DFPT_ENABLE_CUDA_ --expt-relaxed-constexpr --compiler-options -fPIC -I../../third_party/local/include -I../../third_party/local/include/eigen3 -o build/evaluate_first_order_rho_run.out build/evaluate_first_order_rho.cpp.o build/evaluate_first_order_rho_run.cuo.o build/device.cuo.o build/device_data.cuo.o
+Running test with ATOM_TILE_SIZE=8
+Initializing device info..., using device 0
+% MAGMA 2.9.0  32-bit magma_int_t, 64-bit pointer.
+% Compiled for CUDA architectures 80
+% CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
+% device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% Mon Apr 28 14:33:47 2025
+MAGMA is using device: 0
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 355558
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 269040
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 18
+n_centers_hartree_potential = 18
+n_atoms = 18
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3164
+n_full_points = 355558
+n_basis = 364
+n_atoms = 18
+n_max_compute_ham = 303
+n_centers_basis_I = 364
+n_max_batch_size = 188
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 86.120766 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 62.487103 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 56.058880 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 56.079361 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 55.284737 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.835903 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.387390 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.310593 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.462143 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.505154 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 51.491840 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 520.199158 ms
+Run ../../fragment_save_bin/case_18 evaluate_first_order_gradient_rho avg time (ms): 52.019917
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 406476
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 311371
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 20
+n_centers_hartree_potential = 20
+n_atoms = 20
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3792
+n_full_points = 406476
+n_basis = 440
+n_atoms = 20
+n_max_compute_ham = 326
+n_centers_basis_I = 440
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 114.016159 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 84.347008 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.993919 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.569984 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.951935 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.626305 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 71.067650 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.936577 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 71.314430 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.790146 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 70.916100 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 715.652100 ms
+Run ../../fragment_save_bin/case_20 evaluate_first_order_gradient_rho avg time (ms): 71.565208
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 440306
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 335201
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 22
+n_centers_hartree_potential = 22
+n_atoms = 22
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3796
+n_full_points = 440306
+n_basis = 468
+n_atoms = 22
+n_max_compute_ham = 342
+n_centers_basis_I = 468
+n_max_batch_size = 191
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 115.405571 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 98.944191 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.427582 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.238144 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.761406 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.785980 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.598595 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.656960 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.450111 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.732735 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 79.737854 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 799.916016 ms
+Run ../../fragment_save_bin/case_22 evaluate_first_order_gradient_rho avg time (ms): 79.991600
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 491288
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 375883
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 24
+n_centers_hartree_potential = 24
+n_atoms = 24
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4320
+n_full_points = 491288
+n_basis = 544
+n_atoms = 24
+n_max_compute_ham = 358
+n_centers_basis_I = 544
+n_max_batch_size = 185
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 142.678619 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 113.987488 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 95.731712 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 95.504387 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 95.454208 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 95.499268 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 96.013313 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 96.736259 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 96.491524 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 95.653885 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 96.408577 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 960.313354 ms
+Run ../../fragment_save_bin/case_24 evaluate_first_order_gradient_rho avg time (ms): 96.031334
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 521741
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 393824
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 26
+n_centers_hartree_potential = 26
+n_atoms = 26
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4535
+n_full_points = 521741
+n_basis = 556
+n_atoms = 26
+n_max_compute_ham = 376
+n_centers_basis_I = 556
+n_max_batch_size = 164
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 150.332550 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 119.045692 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 104.654846 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 105.066498 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 105.318398 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 104.897537 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 105.971710 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 106.483711 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 105.992195 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 106.342400 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 106.085373 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 1058.874390 ms
+Run ../../fragment_save_bin/case_26 evaluate_first_order_gradient_rho avg time (ms): 105.887436
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 555274
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 413771
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 28
+n_centers_hartree_potential = 28
+n_atoms = 28
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4843
+n_full_points = 555274
+n_basis = 584
+n_atoms = 28
+n_max_compute_ham = 376
+n_centers_basis_I = 584
+n_max_batch_size = 195
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 167.657242 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 117.418716 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 119.754753 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 119.774208 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 120.026115 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 119.516159 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 121.000961 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 120.817665 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 123.565056 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 121.522179 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 121.184258 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 1211.317261 ms
+Run ../../fragment_save_bin/case_28 evaluate_first_order_gradient_rho avg time (ms): 121.131729
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 594927
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 440142
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 30
+n_centers_hartree_potential = 30
+n_atoms = 30
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5389
+n_full_points = 594927
+n_basis = 628
+n_atoms = 30
+n_max_compute_ham = 385
+n_centers_basis_I = 628
+n_max_batch_size = 168
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 177.360580 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 143.786407 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 136.733704 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 137.565186 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 136.515579 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 136.868866 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 137.983994 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 137.078781 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 137.351166 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 137.142273 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 136.797180 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 1375.945679 ms
+Run ../../fragment_save_bin/case_30 evaluate_first_order_gradient_rho avg time (ms): 137.594574
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 641169
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 484516
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 32
+n_centers_hartree_potential = 32
+n_atoms = 32
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5657
+n_full_points = 641169
+n_basis = 704
+n_atoms = 32
+n_max_compute_ham = 422
+n_centers_basis_I = 704
+n_max_batch_size = 200
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 197.583481 ms
+Check first_order_gradient_rho finished.
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 158.890137 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.313217 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.868225 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.252808 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.775040 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.980865 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.963455 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 163.299332 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 162.156540 ms
+evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ execution time in stream: 163.264511 ms
+Warm up finished.
+Start running...
+Run evaluate_first_order_gradient_rho finished.: 1628.620850 ms
+Run ../../fragment_save_bin/case_32 evaluate_first_order_gradient_rho avg time (ms): 162.862091
+Run finished.
+[[Result]], 8, 4, case_18, 52.019917
+[[Result]], 8, 4, case_20, 71.565208
+[[Result]], 8, 4, case_22, 79.991600
+[[Result]], 8, 4, case_24, 96.031334
+[[Result]], 8, 4, case_26, 105.887436
+[[Result]], 8, 4, case_28, 121.131729
+[[Result]], 8, 4, case_30, 137.594574
+[[Result]], 8, 4, case_32, 162.862091
+----------------------------------------
