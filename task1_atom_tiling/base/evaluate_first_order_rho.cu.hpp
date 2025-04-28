@@ -11,7 +11,7 @@
 
 #include "device_data.hpp"
 
-constexpr bool enable_profile_rho_each_kernel = false;
+constexpr bool enable_profile_rho_each_kernel = true;
 constexpr bool enable_profile_rho_end_to_end = false;
 
 #define ALL_KERNELS_ON_GPU
@@ -90,8 +90,49 @@ __global__ void global_first_order_density_to_local(
   // }
 }
 
+template <int block_size>
+__global__ void global_density_to_local(
+    const int batch_offset,
+    const int n_basis,
+    const int n_centers_basis_I,
+    const int n_max_compute_ham,
+    const int real_n_batches_tile,
+    const int *__restrict__ __attribute__((aligned(16))) n_compute_c_batches_ptr,
+    const int *__restrict__ __attribute__((aligned(16))) i_basis_batches_ptr,
+    const int *__restrict__ __attribute__((aligned(16))) i_valid_batch_2_i_batch_ptr,
+    const int *__restrict__ __attribute__((aligned(16))) density_matrix_compute_offsets_ptr, // 暂时没用上
+    const double *__restrict__ __attribute__((aligned(16))) density_matrix_ptr,
+    double *__restrict__ __attribute__((aligned(16))) density_matrix_compute_batches_ptr) {
+
+  const int batch_inner_id = blockIdx.x;
+  const int batch_id = i_valid_batch_2_i_batch_ptr[batch_inner_id + batch_offset];
+
+  int i_compute = blockIdx.y * block_size + threadIdx.x;
+  const int n_compute_c = n_compute_c_batches_ptr[batch_id];
+  if (i_compute >= n_compute_c)
+    return;
+
+  cTMf64<2> TM_INIT(density_matrix, n_basis, n_basis);
+  TMf64<3> TM_INIT(density_matrix_compute_batches, n_max_compute_ham, n_max_compute_ham, real_n_batches_tile);
+
+  const int *i_basis_index_ptr = &i_basis_batches_ptr[n_centers_basis_I * batch_id];
+
+  // for (int i_compute = threadIdx.x; i_compute < n_compute_c; i_compute += block_size) {
+  int i_basis = i_basis_index_ptr[i_compute] - 1;
+  for (int j_compute = 0; j_compute < n_compute_c; j_compute++) {
+    int j_basis = i_basis_index_ptr[j_compute] - 1;
+
+    density_matrix_compute_batches_ptr
+        [i_compute + n_max_compute_ham * (j_compute + n_max_compute_ham * batch_inner_id)] =
+            density_matrix_ptr[i_basis + j_basis * n_basis];
+  }
+}
+
 template <int atom_tile_size, int block_size>
 __global__ void first_order_rho_ddot(
+    const int j_atom_begin,
+    const int j_atom_end,
+    const int j_coord,
     const int i_batch_offset,
     // scalars
     const int n_full_points,
@@ -99,6 +140,7 @@ __global__ void first_order_rho_ddot(
     const int n_my_batches_work,
     const int n_batch_tile,
     const int n_max_compute_ham,
+    const int n_atoms,
     // arrays
     const int *__restrict__ __attribute__((aligned(16))) i_valid_batch_2_i_batch_ptr,
     const int *__restrict__ __attribute__((aligned(16))) n_compute_c_batches_ptr,
@@ -108,11 +150,13 @@ __global__ void first_order_rho_ddot(
     const int *__restrict__ __attribute__((aligned(16))) i_batch_2_wave_offset_ptr,
     const int *__restrict__ __attribute__((aligned(16))) n_point_batches_prefix_sum_ptr,
     const int *__restrict__ __attribute__((aligned(16))) i_valid_point_2_i_full_points_map_ptr,
+    const int *__restrict__ __attribute__((aligned(16))) atom_valid_n_compute_c_batches_ptr,
     double *__restrict__ __attribute__((aligned(16))) first_order_rho_ptr,
     const double *__restrict__ __attribute__((aligned(16))) first_order_rho_bias_part2_ptr,
     double *__restrict__ __attribute__((aligned(16))) first_order_gradient_rho_ptr,
     const double *__restrict__ __attribute__((aligned(16))) first_order_gradient_rho_bias_batches_atoms_ptr,
-    const double *__restrict__ __attribute__((aligned(16))) work1_batches_ptr) {
+    const double *__restrict__ __attribute__((aligned(16))) work1_batches_ptr,
+    const double *__restrict__ __attribute__((aligned(16))) work2_batches_ptr) {
 
   int i_batch_inner = blockIdx.x;
   // int i_point = threadIdx.x;
@@ -149,7 +193,31 @@ __global__ void first_order_rho_ddot(
   // TODO work1 有 n_batch_tile 份，目前测试时只有 1 份
 
   const double *work1_ptr = work1_batches_ptr + i_batch_inner * atom_tile_size * n_max_compute_ham * n_max_batch_size;
+  const double *work2_ptr = work1_batches_ptr + i_batch_inner * atom_tile_size * n_max_compute_ham * n_max_batch_size;
   cTMf64<3> TM_INIT(work1, atom_tile_size, n_max_compute_ham, n_points);
+  cTMf64<2> TM_INIT(work2, n_max_compute_ham, n_points);
+
+  cTMi32<2> TM_INIT(atom_valid_n_compute_c_batches, n_atoms + 1, n_my_batches_work);
+
+  double acc_bias[ATOM_TILE_SIZE] = { 0 };
+
+  const int valid_i_compute_first_atom_start = atom_valid_n_compute_c_batches(j_atom_begin - 1, i_my_batch);
+
+  for (int j_atom_inner = 0; j_atom_inner < ATOM_TILE_SIZE; j_atom_inner++) {
+    // for (int j_atom = j_atom_begin; j_atom <= j_atom_end; j_atom++) {
+    //   int j_atom_inner = j_atom - j_atom_begin;
+    int j_atom = j_atom_inner + j_atom_begin;
+    if (j_atom > j_atom_end) {
+      break;
+    }
+    int valid_i_compute_start = atom_valid_n_compute_c_batches(j_atom - 1, i_my_batch);
+    int valid_i_compute_end = atom_valid_n_compute_c_batches(j_atom, i_my_batch);
+    // int valid_n_compute_count = valid_i_compute_end - valid_i_compute_start;
+    for (int i_compute = valid_i_compute_start; i_compute < valid_i_compute_end; i_compute++) {
+      acc_bias[j_atom_inner] += -gradient_basis_wave(i_compute, j_coord - 1, i_point) *
+                                work2(i_compute - valid_i_compute_first_atom_start, i_point);
+    }
+  }
 
   // for (int i_point = threadIdx.x; i_point < n_points; i_point += block_size) {
   double acc[ATOM_TILE_SIZE] = { 0 };
@@ -179,7 +247,7 @@ __global__ void first_order_rho_ddot(
 
   XDEF_UNROLL
   for (int i = 0; i < atom_tile_size; i++) {
-    first_order_rho(i_full_points_map(i_point), i) = acc[i] + first_order_rho_bias_part2(i_point, i_my_batch, i);
+    first_order_rho(i_full_points_map(i_point), i) = acc[i] + acc_bias[i] + first_order_rho_bias_part2(i_point, i_my_batch, i);
   }
   // }
   // }
@@ -286,6 +354,50 @@ void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
       event_helper.record_start();
       const int block_size = 128;
       dim3 blockSizes;
+      blockSizes = { block_size, 1, 1 };
+      dim3 gridSizes(real_n_batches_tile, CDIV(n_max_compute_ham, block_size), 1);
+      global_density_to_local<block_size><<<gridSizes, blockSizes, 0, stream>>>(
+          i_my_batch_outer,
+          n_basis,
+          n_centers_basis_I,
+          n_max_compute_ham,
+          real_n_batches_tile,
+          devPs.n_compute_c_batches.ptr,
+          devPs.i_basis_batches.ptr,
+          devPs.i_valid_batch_2_i_batch.ptr,
+          nullptr,
+          devPs.density_matrix.ptr,
+          devPs.density_matrix_compute_batches.ptr);
+      event_helper.elapsed_time("Kernel global_density_to_local  execution time in stream");
+    }
+    {
+      event_helper.record_start();
+      magmablas_dgemm_vbatched_max_nocheck(
+          MagmaNoTrans,
+          MagmaNoTrans,
+          &devPs.n_compute_c_valid_batches.ptr[i_my_batch_outer], // 错误的
+          &devPs.n_point_valid_batches.ptr[i_my_batch_outer],
+          &devPs.n_compute_c_valid_batches.ptr[i_my_batch_outer],
+          1.0,
+          &devPs.density_matrix_compute_ptrs.ptr[0],
+          &devPs.work2_batches_ldas.ptr[0],
+          &devPs.wave_dev_ptrs.ptr[i_my_batch_outer],
+          &devPs.n_compute_c_padding_valid_batches.ptr[i_my_batch_outer],
+          0.0,
+          &devPs.work2_batches_ptrs.ptr[0],
+          &devPs.work2_batches_ldas.ptr[0],
+          real_n_batches_tile,
+          host_first_order_rho_data.work1_max_m(i_my_batch_outer / N_BATCHES_TILE),
+          host_first_order_rho_data.work1_max_n(i_my_batch_outer / N_BATCHES_TILE),
+          host_first_order_rho_data.work1_max_k(i_my_batch_outer / N_BATCHES_TILE),
+          magma_queue);
+      event_helper.elapsed_time("Kernel magmablas_dgemm_vbatched_max_nocheck execution time in stream");
+    }
+
+    {
+      event_helper.record_start();
+      const int block_size = 128;
+      dim3 blockSizes;
       if constexpr (ATOM_TILE_SIZE >= 4 && (ATOM_TILE_SIZE % 2) == 0) {
         blockSizes = { ATOM_TILE_SIZE / 2, block_size, 1 };
       } else {
@@ -337,12 +449,16 @@ void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
       dim3 blockSizes(block_size, CDIV(n_max_batch_size, block_size), 1);
       dim3 gridSizes(real_n_batches_tile, 1, 1);
       first_order_rho_ddot<ATOM_TILE_SIZE, block_size><<<gridSizes, blockSizes, 0, stream>>>(
+          j_atom_begin,
+          j_atom_end,
+          j_coord,
           i_my_batch_outer,
           n_full_points,
           n_max_batch_size,
           n_my_batches_work,
           real_n_batches_tile,
           n_max_compute_ham,
+          n_atoms,
           devPs.i_valid_batch_2_i_batch.ptr,
           devPs.n_compute_c_batches.ptr,
           devPs.n_point_batches.ptr,
@@ -351,11 +467,13 @@ void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
           devPs.i_batch_2_wave_offset.ptr,
           devPs.n_point_batches_prefix_sum.ptr,
           devPs.i_valid_point_2_i_full_points_map.ptr,
+          devPs.atom_valid_n_compute_c_batches.ptr,
           devPs.first_order_rho.ptr,
           devPs.first_order_rho_bias_part2.ptr,
           devPs.first_order_gradient_rho.ptr,
           devPs.first_order_gradient_rho_bias_batches_atoms.ptr,
-          devPs.work1_batches.ptr);
+          devPs.work1_batches.ptr,
+          devPs.work2_batches.ptr);
       event_helper.elapsed_time("Kernel first_order_rho_ddot                 execution time in stream");
     }
     // printf("\n");

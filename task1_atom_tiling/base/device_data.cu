@@ -201,12 +201,14 @@ void init_dfpt_device_data(
   devPs.first_order_density_matrix_compute_batches.size =
       ATOM_TILE_SIZE * n_max_compute_ham * n_max_compute_ham * N_BATCHES_TILE;
   devPs.work1_batches.size = ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size * N_BATCHES_TILE;
+  devPs.work2_batches.size = n_max_compute_ham * n_max_batch_size * N_BATCHES_TILE;
   DEV_CHECK(
       DEV_MALLOC((void **)&devPs.density_matrix_compute_batches.ptr, devPs.density_matrix_compute_batches.byte_size()));
   DEV_CHECK(DEV_MALLOC(
       (void **)&devPs.first_order_density_matrix_compute_batches.ptr,
       devPs.first_order_density_matrix_compute_batches.byte_size()));
   DEV_CHECK(DEV_MALLOC((void **)&devPs.work1_batches.ptr, devPs.work1_batches.byte_size()));
+  DEV_CHECK(DEV_MALLOC((void **)&devPs.work2_batches.ptr, devPs.work2_batches.byte_size()));
 
   devPs.first_order_density_matrix_atom_inner_trans.size = ATOM_TILE_SIZE * n_basis * n_basis;
   DEV_CHECK(DEV_MALLOC(
@@ -230,14 +232,18 @@ void init_dfpt_device_data(
   Ti32<1> i_valid_batch_2_i_batch(n_my_batches_work + 1);
   Ti32<1> n_point_valid_batches(n_my_batches_work + 1);
   Ti32<1> n_compute_c_valid_batches(n_my_batches_work + 1);
+  Ti32<1> n_compute_c_atom_tile_valid_batches((n_my_batches_work + 1) * CDIV(n_atoms, ATOM_TILE_SIZE));
   Ti32<1> n_compute_c_padding_valid_batches(ALIGN_UP(n_my_batches_work, N_BATCHES_TILE) + N_BATCHES_TILE + 1);
   Ti32<1> n_compute_c_mul_atom_tile_size_valid_batches(n_my_batches_work + 1);
   ETT<double *, 1> wave_dev_ptrs(n_my_batches_work);
 
   ETT<double *, 1> first_order_density_matrix_compute_ptrs(N_BATCHES_TILE);
+  ETT<double *, 1> density_matrix_compute_ptrs(N_BATCHES_TILE);
   ETT<double *, 1> work1_batches_ptrs(N_BATCHES_TILE);
+  ETT<double *, 1> work2_batches_ptrs(N_BATCHES_TILE);
   Ti32<1> first_order_density_matrix_compute_ldas(N_BATCHES_TILE + 1);
   Ti32<1> work1_batches_ldas(N_BATCHES_TILE + 1);
+  Ti32<1> work2_batches_ldas(N_BATCHES_TILE + 1);
 
   int i_valid_batch = 0;
   for (int i_batch = 0; i_batch < n_my_batches_work; i_batch++) {
@@ -245,6 +251,16 @@ void init_dfpt_device_data(
     int n_compute_c_padding = ALIGN_UP(n_compute_c, N_COMPUTE_C_PADDING_SIZE);
 
     if (n_compute_c > 0) {
+
+      for (int j_atom_begin = 1; j_atom_begin <= n_atoms; j_atom_begin += ATOM_TILE_SIZE) {
+        int j_atom_end = std::min(j_atom_begin + ATOM_TILE_SIZE - 1, n_atoms);
+        int valid_i_compute_first_atom_start = atom_valid_n_compute_c_batches(j_atom_begin - 1, i_batch);
+        int valid_i_compute_last_atom_end = atom_valid_n_compute_c_batches(j_atom_end, i_batch);
+        int valid_n_compute_tile_atom_count = valid_i_compute_last_atom_end - valid_i_compute_first_atom_start;
+
+        n_compute_c_atom_tile_valid_batches(i_valid_batch) = valid_n_compute_tile_atom_count;
+      }
+
       i_valid_batch_2_i_batch(i_valid_batch) = i_batch;
       n_point_valid_batches(i_valid_batch) = n_point_batches_ptr[i_batch];
       n_compute_c_valid_batches(i_valid_batch) = n_compute_c;
@@ -281,23 +297,31 @@ void init_dfpt_device_data(
   for (int i = 0; i < N_BATCHES_TILE; i++) {
     first_order_density_matrix_compute_ptrs(i) = &devPs.first_order_density_matrix_compute_batches
                                                       .ptr[ATOM_TILE_SIZE * n_max_compute_ham * n_max_compute_ham * i];
+    density_matrix_compute_ptrs(i) =
+        &devPs.density_matrix_compute_batches.ptr[n_max_compute_ham * n_max_compute_ham * i];
     work1_batches_ptrs(i) = &devPs.work1_batches.ptr[ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size * i];
+    work2_batches_ptrs(i) = &devPs.work2_batches.ptr[n_max_compute_ham * n_max_batch_size * i];
 
     first_order_density_matrix_compute_ldas(i) = ATOM_TILE_SIZE * n_max_compute_ham;
     work1_batches_ldas(i) = ATOM_TILE_SIZE * n_max_compute_ham;
+    work2_batches_ldas(i) = n_max_compute_ham;
   }
 
   TM_DEV_PS_INIT(i_valid_batch_2_i_batch);
   TM_DEV_PS_INIT(n_point_valid_batches);
   TM_DEV_PS_INIT(n_compute_c_valid_batches);
+  TM_DEV_PS_INIT(n_compute_c_atom_tile_valid_batches);
   TM_DEV_PS_INIT(n_compute_c_padding_valid_batches);
   TM_DEV_PS_INIT(n_compute_c_mul_atom_tile_size_valid_batches);
   TM_DEV_PS_INIT(first_order_density_matrix_compute_ldas);
   TM_DEV_PS_INIT(work1_batches_ldas);
+  TM_DEV_PS_INIT(work2_batches_ldas);
 
   TM_DEV_PS_INIT(first_order_density_matrix_compute_ptrs);
+  TM_DEV_PS_INIT(density_matrix_compute_ptrs);
   TM_DEV_PS_INIT(wave_dev_ptrs);
   TM_DEV_PS_INIT(work1_batches_ptrs);
+  TM_DEV_PS_INIT(work2_batches_ptrs);
 
   Ti32<2> index_lm(l_pot_max * 2 + 1, l_pot_max + 1); // index_lm(-l_pot_max:l_pot_max, 0:l_pot_max )
   int i_index = 0;
@@ -349,13 +373,17 @@ void init_dfpt_device_data(
   TM_DEV_PS_H2D_H(i_valid_batch_2_i_batch);
   TM_DEV_PS_H2D_H(n_point_valid_batches);
   TM_DEV_PS_H2D_H(n_compute_c_valid_batches);
+  TM_DEV_PS_H2D_H(n_compute_c_atom_tile_valid_batches);
   TM_DEV_PS_H2D_H(n_compute_c_padding_valid_batches);
   TM_DEV_PS_H2D_H(n_compute_c_mul_atom_tile_size_valid_batches);
   TM_DEV_PS_H2D_H(first_order_density_matrix_compute_ldas);
   TM_DEV_PS_H2D_H(work1_batches_ldas);
+  TM_DEV_PS_H2D_H(work2_batches_ldas);
   TM_DEV_PS_H2D_H(first_order_density_matrix_compute_ptrs);
+  TM_DEV_PS_H2D_H(density_matrix_compute_ptrs);
   TM_DEV_PS_H2D_H(wave_dev_ptrs);
   TM_DEV_PS_H2D_H(work1_batches_ptrs);
+  TM_DEV_PS_H2D_H(work2_batches_ptrs);
 
   TM_DEV_PS_H2D_H(index_lm);
 }
@@ -412,13 +440,17 @@ void free_dfpt_device_data() {
   TM_DEV_PS_FREE(i_valid_batch_2_i_batch);
   TM_DEV_PS_FREE(n_point_valid_batches);
   TM_DEV_PS_FREE(n_compute_c_valid_batches);
+  TM_DEV_PS_FREE(n_compute_c_atom_tile_valid_batches);
   TM_DEV_PS_FREE(n_compute_c_padding_valid_batches);
   TM_DEV_PS_FREE(n_compute_c_mul_atom_tile_size_valid_batches);
   TM_DEV_PS_FREE(first_order_density_matrix_compute_ldas);
   TM_DEV_PS_FREE(work1_batches_ldas);
+  TM_DEV_PS_FREE(work2_batches_ldas);
   TM_DEV_PS_FREE(first_order_density_matrix_compute_ptrs);
+  TM_DEV_PS_FREE(density_matrix_compute_ptrs);
   TM_DEV_PS_FREE(wave_dev_ptrs);
   TM_DEV_PS_FREE(work1_batches_ptrs);
+  TM_DEV_PS_FREE(work2_batches_ptrs);
 
   TM_DEV_PS_FREE(index_lm);
 
@@ -426,6 +458,7 @@ void free_dfpt_device_data() {
   TM_DEV_PS_FREE(density_matrix_compute_batches);
   TM_DEV_PS_FREE(first_order_density_matrix_compute_batches);
   TM_DEV_PS_FREE(work1_batches);
+  TM_DEV_PS_FREE(work2_batches);
   TM_DEV_PS_FREE(first_order_density_matrix_atom_inner_trans);
 
   TM_DEV_PS_FREE(multipole_c);

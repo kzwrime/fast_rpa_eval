@@ -1,8 +1,16 @@
 # 编译器设置
+
+ifeq ($(strip $(CXX)),)
+  $(error CXX environment variable is not set. Please export CXX)
+endif
+ifeq ($(strip $(NVCC)),)
+  $(error NVCC environment variable is not set. Please export NVCC)
+endif
+
 CXX := $(CXX)
 NVCC := $(NVCC)
 
-CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=8 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
+CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
 
 # 根据 NVCC 是否包含 nvcc，选择启用 CUDA 或 HIP 宏
 ifeq ($(findstring nvcc,$(NVCC)),nvcc)

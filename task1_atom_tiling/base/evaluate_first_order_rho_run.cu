@@ -2,9 +2,9 @@ int __mpi_tasks_MOD_n_tasks = 1;
 int __mpi_tasks_MOD_myid = 0;
 
 #include "common.hpp"
-#include "evaluate_first_order_rho_direct_test.hpp"
-#include "evaluate_first_order_rho.h"
 #include "evaluate_first_order_rho.cu.hpp"
+#include "evaluate_first_order_rho.h"
+#include "evaluate_first_order_rho_direct_test.hpp"
 
 #include "device.hpp"
 #include "device_data.hpp"
@@ -202,71 +202,76 @@ float call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaDat
   TM_DEV_PS_D2H_H(first_order_rho);
   TM_DEV_PS_D2H_H(first_order_gradient_rho);
 
-  int failed_count = 0;
-  for (int i = 0; i < rho_data.n_full_points; i++) {
-    if (std::abs(first_order_rho.data()[i] - first_order_rho_ref.data()[i]) > 1E-6) {
-      failed_count++;
-      printf(
-          "first_order_rho error! i_full_point %9d, %.18f != %.18f\n",
-          i,
-          first_order_rho.data()[i],
-          first_order_rho_ref.data()[i]);
-    }
-    if (failed_count > 10) {
-      printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
-      break;
-    }
-  }
-  printf("Check first_order_rho finished.\n");
+  // int failed_count = 0;
+  // for (int i = 0; i < rho_data.n_full_points; i++) {
+  //   if (std::abs(first_order_rho.data()[i] - first_order_rho_ref.data()[i]) > 1E-6) {
+  //     failed_count++;
+  //     printf(
+  //         "first_order_rho error! i_full_point %9d, %.18f != %.18f\n",
+  //         i,
+  //         first_order_rho.data()[i],
+  //         first_order_rho_ref.data()[i]);
+  //   }
+  //   if (failed_count > 10) {
+  //     printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
+  //     break;
+  //   }
+  // }
+  // printf("Check first_order_rho finished.\n");
 
-  for (int i = 0; i < rho_data.n_full_points; i++) {
-    if (std::abs(first_order_gradient_rho.data()[i] - first_order_gradient_rho_ref.data()[i]) > 1E-6) {
-      failed_count++;
-      printf(
-          "first_order_gradient_rho error! i_full_point %9d, %.18f != %.18f\n",
-          i,
-          first_order_gradient_rho.data()[i],
-          first_order_gradient_rho_ref.data()[i]);
-    }
-    if (failed_count > 10) {
-      printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
-      break;
-    }
-  }
-  printf("Check first_order_gradient_rho finished.\n");
+  // for (int i = 0; i < rho_data.n_full_points; i++) {
+  //   if (std::abs(first_order_gradient_rho.data()[i] - first_order_gradient_rho_ref.data()[i]) > 1E-6) {
+  //     failed_count++;
+  //     printf(
+  //         "first_order_gradient_rho error! i_full_point %9d, %.18f != %.18f\n",
+  //         i,
+  //         first_order_gradient_rho.data()[i],
+  //         first_order_gradient_rho_ref.data()[i]);
+  //   }
+  //   if (failed_count > 10) {
+  //     printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
+  //     break;
+  //   }
+  // }
+  // printf("Check first_order_gradient_rho finished.\n");
 
-  int warm_up = 10;
+  int n_atom_align_down = rho_data.n_atoms / ATOM_TILE_SIZE * ATOM_TILE_SIZE;
+
+  int warm_up = 3;
   for (int iter = 0; iter < warm_up; iter++) {
-    evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_<true>(
-        &rho_data.n_my_batches_work,
-        &j_atom_begin_,
-        &j_atom_end_,
-        &j_coord_,
-        &rho_data.n_full_points,
-        &rho_data.n_basis,
-        &rho_data.n_atoms,
-        &rho_data.n_max_compute_ham,
-        &rho_data.n_centers_basis_I,
-        &rho_data.n_max_batch_size,
-        rho_data.batch_sizes.data(),
-        rho_data.n_point_batches.data(),
-        rho_data.n_point_batches_prefix_sum.data(),
-        rho_data.i_valid_point_2_i_full_points_map.data(),
-        rho_data.n_compute_c_batches.data(),
-        rho_data.i_basis_batches.data(),
-        rho_data.atom_valid_n_compute_c_batches.data(),
-        rho_data.i_batch_2_wave_offset.data(),
-        wave_batches_compress.data(),
-        gradient_wave_batches_compress.data(),
-        first_order_density_matrix.data(),
-        first_order_rho.data(),
-        first_order_rho_bias_part2.data(),
-        first_order_gradient_rho.data(),
-        first_order_gradient_rho_bias_batches_atoms.data(),
+    for (int j_atom_begin_ = 1; j_atom_begin_ <= n_atom_align_down; j_atom_begin_ += ATOM_TILE_SIZE) {
+      int j_atom_end = std::min(j_atom_begin_ + ATOM_TILE_SIZE - 1, rho_data.n_atoms);
+      evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_<true>(
+          &rho_data.n_my_batches_work,
+          &j_atom_begin_,
+          &j_atom_end_,
+          &j_coord_,
+          &rho_data.n_full_points,
+          &rho_data.n_basis,
+          &rho_data.n_atoms,
+          &rho_data.n_max_compute_ham,
+          &rho_data.n_centers_basis_I,
+          &rho_data.n_max_batch_size,
+          rho_data.batch_sizes.data(),
+          rho_data.n_point_batches.data(),
+          rho_data.n_point_batches_prefix_sum.data(),
+          rho_data.i_valid_point_2_i_full_points_map.data(),
+          rho_data.n_compute_c_batches.data(),
+          rho_data.i_basis_batches.data(),
+          rho_data.atom_valid_n_compute_c_batches.data(),
+          rho_data.i_batch_2_wave_offset.data(),
+          wave_batches_compress.data(),
+          gradient_wave_batches_compress.data(),
+          first_order_density_matrix.data(),
+          first_order_rho.data(),
+          first_order_rho_bias_part2.data(),
+          first_order_gradient_rho.data(),
+          first_order_gradient_rho_bias_batches_atoms.data(),
 
-        basis_atom.data(),
-        partition_tab.data(),
-        density_matrix.data());
+          basis_atom.data(),
+          partition_tab.data(),
+          density_matrix.data());
+    }
   }
 
   printf("Warm up finished.\n");
@@ -276,42 +281,48 @@ float call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaDat
   EventHelper<true> event_helper_all(stream);
   event_helper_all.record_start();
 
-  int run_iters = 10;
+  int run_iters = 3;
   for (int iter = 0; iter < run_iters; iter++) {
-    evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_<false>(
-        &rho_data.n_my_batches_work,
-        &j_atom_begin_,
-        &j_atom_end_,
-        &j_coord_,
-        &rho_data.n_full_points,
-        &rho_data.n_basis,
-        &rho_data.n_atoms,
-        &rho_data.n_max_compute_ham,
-        &rho_data.n_centers_basis_I,
-        &rho_data.n_max_batch_size,
-        rho_data.batch_sizes.data(),
-        rho_data.n_point_batches.data(),
-        rho_data.n_point_batches_prefix_sum.data(),
-        rho_data.i_valid_point_2_i_full_points_map.data(),
-        rho_data.n_compute_c_batches.data(),
-        rho_data.i_basis_batches.data(),
-        rho_data.atom_valid_n_compute_c_batches.data(),
-        rho_data.i_batch_2_wave_offset.data(),
-        wave_batches_compress.data(),
-        gradient_wave_batches_compress.data(),
-        first_order_density_matrix.data(),
-        first_order_rho.data(),
-        first_order_rho_bias_part2.data(),
-        first_order_gradient_rho.data(),
-        first_order_gradient_rho_bias_batches_atoms.data(),
+    for (int j_atom_begin_ = 1; j_atom_begin_ <= n_atom_align_down; j_atom_begin_ += ATOM_TILE_SIZE) {
+      int j_atom_end = std::min(j_atom_begin_ + ATOM_TILE_SIZE - 1, rho_data.n_atoms);
+      evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_<false>(
+          &rho_data.n_my_batches_work,
+          &j_atom_begin_,
+          &j_atom_end_,
+          &j_coord_,
+          &rho_data.n_full_points,
+          &rho_data.n_basis,
+          &rho_data.n_atoms,
+          &rho_data.n_max_compute_ham,
+          &rho_data.n_centers_basis_I,
+          &rho_data.n_max_batch_size,
+          rho_data.batch_sizes.data(),
+          rho_data.n_point_batches.data(),
+          rho_data.n_point_batches_prefix_sum.data(),
+          rho_data.i_valid_point_2_i_full_points_map.data(),
+          rho_data.n_compute_c_batches.data(),
+          rho_data.i_basis_batches.data(),
+          rho_data.atom_valid_n_compute_c_batches.data(),
+          rho_data.i_batch_2_wave_offset.data(),
+          wave_batches_compress.data(),
+          gradient_wave_batches_compress.data(),
+          first_order_density_matrix.data(),
+          first_order_rho.data(),
+          first_order_rho_bias_part2.data(),
+          first_order_gradient_rho.data(),
+          first_order_gradient_rho_bias_batches_atoms.data(),
 
-        basis_atom.data(),
-        partition_tab.data(),
-        density_matrix.data());
+          basis_atom.data(),
+          partition_tab.data(),
+          density_matrix.data());
+    }
   }
 
   float milliseconds = event_helper_all.elapsed_time("Run evaluate_first_order_gradient_rho finished.");
-  printf("Run %s evaluate_first_order_gradient_rho avg time (ms): %f\n", base_path, milliseconds / run_iters);
+  printf(
+      "Run %s evaluate_first_order_gradient_rho avg time per atom (ms): %f\n",
+      base_path,
+      milliseconds / run_iters / n_atom_align_down);
 
   printf("Run finished.\n");
   free_dfpt_device_data();

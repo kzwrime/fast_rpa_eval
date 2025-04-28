@@ -133,20 +133,24 @@ struct DevicePtrs {
   PtrContainer<int> i_valid_batch_2_i_batch;
   PtrContainer<int> n_point_valid_batches;
   PtrContainer<int> n_compute_c_valid_batches;
+  PtrContainer<int> n_compute_c_atom_tile_valid_batches;
   PtrContainer<int> n_compute_c_padding_valid_batches;
   PtrContainer<int> n_compute_c_mul_atom_tile_size_valid_batches;
   PtrContainer<int> first_order_density_matrix_compute_ldas;
   PtrContainer<int> work1_batches_ldas;
+  PtrContainer<int> work2_batches_ldas;
   PtrContainer<double *> first_order_density_matrix_compute_ptrs;
+  PtrContainer<double *> density_matrix_compute_ptrs;
   PtrContainer<double *> wave_dev_ptrs;
   PtrContainer<double *> work1_batches_ptrs;
-
+  PtrContainer<double *> work2_batches_ptrs;
   PtrContainer<int> index_lm;
 
   // 用于 Kernel 自身 / Kernel 之间使用的临时数组
   PtrContainer<double> density_matrix_compute_batches;
   PtrContainer<double> first_order_density_matrix_compute_batches;
   PtrContainer<double> work1_batches;
+  PtrContainer<double> work2_batches;
   PtrContainer<double> first_order_density_matrix_atom_inner_trans;
 
   PtrContainer<double> multipole_c;
