@@ -1,0 +1,312 @@
+Initializing device info..., using device 0
+% MAGMA 2.9.0  32-bit magma_int_t, 64-bit pointer.
+% Compiled for CUDA architectures 80
+% CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
+% device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
+% Mon Apr 28 20:27:57 2025
+MAGMA is using device: 0
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 355558
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 269040
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 18
+n_centers_hartree_potential = 18
+n_atoms = 18
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3164
+n_full_points = 355558
+n_basis = 364
+n_atoms = 18
+n_max_compute_ham = 303
+n_centers_basis_I = 364
+n_max_batch_size = 188
+355558 355558
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 37.662720 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 406476
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 311371
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 20
+n_centers_hartree_potential = 20
+n_atoms = 20
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3792
+n_full_points = 406476
+n_basis = 440
+n_atoms = 20
+n_max_compute_ham = 326
+n_centers_basis_I = 440
+n_max_batch_size = 200
+406476 406476
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 25.383936 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 440306
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 335201
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 22
+n_centers_hartree_potential = 22
+n_atoms = 22
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 3796
+n_full_points = 440306
+n_basis = 468
+n_atoms = 22
+n_max_compute_ham = 342
+n_centers_basis_I = 468
+n_max_batch_size = 191
+440306 440306
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 22.264832 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 491288
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 375883
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 24
+n_centers_hartree_potential = 24
+n_atoms = 24
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4320
+n_full_points = 491288
+n_basis = 544
+n_atoms = 24
+n_max_compute_ham = 358
+n_centers_basis_I = 544
+n_max_batch_size = 185
+491288 491288
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 27.458561 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 521741
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 393824
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 26
+n_centers_hartree_potential = 26
+n_atoms = 26
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4535
+n_full_points = 521741
+n_basis = 556
+n_atoms = 26
+n_max_compute_ham = 376
+n_centers_basis_I = 556
+n_max_batch_size = 164
+521741 521741
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 30.477312 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 555274
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 413771
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 28
+n_centers_hartree_potential = 28
+n_atoms = 28
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 4843
+n_full_points = 555274
+n_basis = 584
+n_atoms = 28
+n_max_compute_ham = 376
+n_centers_basis_I = 584
+n_max_batch_size = 195
+555274 555274
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 37.412865 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 594927
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 440142
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 30
+n_centers_hartree_potential = 30
+n_atoms = 30
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5389
+n_full_points = 594927
+n_basis = 628
+n_atoms = 30
+n_max_compute_ham = 385
+n_centers_basis_I = 628
+n_max_batch_size = 168
+594927 594927
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 50.511871 ms
+Run finished.
+j_atom_begin = 1
+j_atom_end = 4
+n_full_points = 641169
+l_max_analytic_multipole = 7
+index_cc_dim_0 = 280
+n_valid_points = 484516
+l_pot_max = 6
+n_max_radial = 221
+n_hartree_grid = 1301
+n_centers = 32
+n_centers_hartree_potential = 32
+n_atoms = 32
+hartree_force_l_add = 1
+n_species = 4
+n_my_batches_work = 5657
+n_full_points = 641169
+n_basis = 704
+n_atoms = 32
+n_max_compute_ham = 422
+n_centers_basis_I = 704
+n_max_batch_size = 200
+641169 641169
+n_cc_lm_ijk_ptr[l_pot_max] = 176
+n_cc_lm_ijk[0:l_pot_max+1]
+1
+4
+12
+28
+57
+104
+176
+
+Check delta_v_hartree finished.
+Warm up finished.
+Start running...
+Run sum_up_whole_potential_far_distance finished.: 46.166016 ms
+Run finished.
+[[Result]], 4, 4, case_18, 37.662720
+[[Result]], 4, 4, case_20, 25.383936
+[[Result]], 4, 4, case_22, 22.264832
+[[Result]], 4, 4, case_24, 27.458561
+[[Result]], 4, 4, case_26, 30.477312
+[[Result]], 4, 4, case_28, 37.412865
+[[Result]], 4, 4, case_30, 50.511871
+[[Result]], 4, 4, case_32, 46.166016

@@ -13,6 +13,8 @@
 
 #include "sheval.hpp"
 
+#include "sum_up_far_dist_potential_dot_auto_generated_by_index_cc_aot.hpp"
+
 constexpr bool enable_profile_sumup_each_kernel = false;
 constexpr bool enable_profile_sumup_end_to_end = false;
 
@@ -73,28 +75,44 @@ __device__ void far_distance_real_hartree_potential_single_atom_p2_fused_fp_cu_i
   dir[1] = coord_current[1] - coords_center(1, i_center - 1);
   dir[2] = coord_current[2] - coords_center(2, i_center - 1);
 
-  int maxval = -1;
-  for (int i = 0; i < 3; i++)
-    maxval = maxval > index_ijk_max_cc(i, l_max) ? maxval : index_ijk_max_cc(i, l_max);
-  for (int i_l = 1; i_l <= maxval; i_l++) {
-    coord_c[0][i_l] = dir[0] * coord_c[0][i_l - 1];
-    coord_c[1][i_l] = dir[1] * coord_c[1][i_l - 1];
-    coord_c[2][i_l] = dir[2] * coord_c[2][i_l - 1];
-  }
-
   double dpot = 0.0;
 
-  int n_end = n_cc_lm_ijk(l_max);
+  // int n_end = n_cc_lm_ijk(l_max);
 
-  for (int n = 0; n < n_end; n++) {
-    int ii = index_cc(n, 3 - 1);
-    int jj = index_cc(n, 4 - 1);
-    int kk = index_cc(n, 5 - 1);
-    int nn = index_cc(n, 6 - 1);
-    dpot += coord_c[0][ii] * coord_c[1][jj] * coord_c[2][kk] * //
-            Fp[nn] * multipole_c(n, center_to_atom(i_center - 1) - 1);
-  }
+  // for (int n = 0; n < n_end; n++) {
+  //   int ii = index_cc(n, 3 - 1);
+  //   int jj = index_cc(n, 4 - 1);
+  //   int kk = index_cc(n, 5 - 1);
+  //   int nn = index_cc(n, 6 - 1);
+  //   dpot += coord_c[0][ii] * coord_c[1][jj] * coord_c[2][kk] * //
+  //           Fp[nn] * multipole_c(n, center_to_atom(i_center - 1) - 1);
+  // }
   //   delta_v_hartree[i_full_points - 1] += dpot;
+
+  {
+    int one_minus_2l = 1;
+    double inv_dist_sq = 1.0 / dist_sq;
+    Fp[0] = 1.0 / dist_tab;
+    for (int i = 1; i < (l_pot_max + 2); i++) {
+      one_minus_2l -= 2;
+      Fp[i] = Fp[i - 1] * one_minus_2l * inv_dist_sq;
+    }
+    dpot += sum_up_far_dist_potential_dot_spec(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1), l_max);
+
+    // if (l_max == 1) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<1>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // } else if (l_max == 2) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<2>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // } else if (l_max == 3) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<3>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // } else if (l_max == 4) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<4>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // } else if (l_max == 5) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<5>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // } else if (l_max == 6) {
+    //   dpot += sum_up_far_dist_potential_dot_spec<6>(dir, Fp, &multipole_c(0, center_to_atom(i_center - 1) - 1));
+    // }
+  }
 
   *potential += dpot;
 }
