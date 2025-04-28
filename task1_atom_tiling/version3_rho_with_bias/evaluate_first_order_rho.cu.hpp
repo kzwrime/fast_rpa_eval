@@ -11,7 +11,7 @@
 
 #include "device_data.hpp"
 
-constexpr bool enable_profile_rho_each_kernel = true;
+constexpr bool enable_profile_rho_each_kernel = false;
 constexpr bool enable_profile_rho_end_to_end = false;
 
 #define ALL_KERNELS_ON_GPU
