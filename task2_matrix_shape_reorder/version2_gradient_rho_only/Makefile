@@ -8,7 +8,8 @@ endif
 CXX := $(CXX)
 NVCC := $(NVCC)
 
-CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
+CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4
+LDLIBS := -L../../third_party/local/lib -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
 
 # 根据 NVCC 是否包含 nvcc，选择启用 CUDA 或 HIP 宏
 ifeq ($(findstring nvcc,$(NVCC)),nvcc)
@@ -56,11 +57,11 @@ prepare_build:
 
 # 链接目标
 ${BUILD_DIR}/sum_up.out: $(SUM_UP_OBJS) $(CU_OBJS) $(COMMON_OBJS)
-	$(NVCC) $(NVCCFLAGS) -o $@ $^
+	$(NVCC) $(NVCCFLAGS) -o $@ $^ $(LDLIBS)
 
 ${BUILD_DIR}/evaluate_first_order_rho_run.out: $(EVAL_RHO_OBJS) $(CU_OBJS) $(COMMON_OBJS)
 	echo "EVAL_RHO_OBJS = $(EVAL_RHO_OBJS)"
-	$(NVCC) $(NVCCFLAGS) -o $@ $^
+	$(NVCC) $(NVCCFLAGS) -o $@ $^ $(LDLIBS)
 
 # 编译规则
 ${BUILD_DIR}/%.cpp.o: ${SRC_DIRS}/%.cpp $(HEADERS)

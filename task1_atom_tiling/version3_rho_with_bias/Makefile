@@ -10,7 +10,11 @@ endif
 CXX := $(CXX)
 NVCC := $(NVCC)
 
-CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
+# 编译选项
+CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4
+
+# 链接选项
+LDLIBS := -L../../third_party/local/lib -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
 
 # 根据 NVCC 是否包含 nvcc，选择启用 CUDA 或 HIP 宏
 ifeq ($(findstring nvcc,$(NVCC)),nvcc)
@@ -21,30 +25,34 @@ else
   NVCCFLAGS := $(CXXFLAGS) -fPIC
 endif
 
-
 # 包含路径
 INCLUDE_DIRS := ../../third_party/local/include ../../third_party/local/include/eigen3
-CXXFLAGS += $(addprefix -I,$(INCLUDE_DIRS))
-NVCCFLAGS += $(addprefix -I,$(INCLUDE_DIRS))
+CXXFLAGS     += $(addprefix -I,$(INCLUDE_DIRS))
+NVCCFLAGS    += $(addprefix -I,$(INCLUDE_DIRS))
 
 SRC_DIRS := .
 BUILD_DIR := ./build
 
 # 源文件和头文件
-COMMON_SRCS := 
-SUM_UP_SRCS := 
+COMMON_SRCS :=
+SUM_UP_SRCS :=
 EVAL_RHO_CPP_SRCS := ${SRC_DIRS}/evaluate_first_order_rho.cpp
-EVAL_RHO_CU_SRCS := ${SRC_DIRS}/evaluate_first_order_rho_run.cu
-CU_SRCS := ${SRC_DIRS}/device.cu ${SRC_DIRS}/device_data.cu
+EVAL_RHO_CU_SRCS  := ${SRC_DIRS}/evaluate_first_order_rho_run.cu
+CU_SRCS           := ${SRC_DIRS}/device.cu ${SRC_DIRS}/device_data.cu
 
 # 目标文件路径设置
 COMMON_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(COMMON_SRCS))
 SUM_UP_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(SUM_UP_SRCS))
-EVAL_RHO_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(EVAL_RHO_CPP_SRCS)) \
-                 $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(EVAL_RHO_CU_SRCS))
+EVAL_RHO_OBJS := \
+  $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(EVAL_RHO_CPP_SRCS)) \
+  $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(EVAL_RHO_CU_SRCS))
 CU_OBJS := $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(CU_SRCS))
 
-HEADERS := $(wildcard ./*.h) $(wildcard ./*.hpp) $(wildcard ${SRC_DIRS}/*.h) $(wildcard ${SRC_DIRS}/*.hpp)
+HEADERS := \
+  $(wildcard ./*.h) \
+  $(wildcard ./*.hpp) \
+  $(wildcard ${SRC_DIRS}/*.h) \
+  $(wildcard ${SRC_DIRS}/*.hpp)
 
 # 最终目标
 TARGETS := ${BUILD_DIR}/evaluate_first_order_rho_run.out
@@ -58,18 +66,18 @@ prepare_build:
 
 # 链接目标
 ${BUILD_DIR}/sum_up.out: $(SUM_UP_OBJS) $(CU_OBJS) $(COMMON_OBJS)
-	$(NVCC) $(NVCCFLAGS) -o $@ $^
+	$(NVCC) $(NVCCFLAGS) -o $@ $^ $(LDLIBS)
 
 ${BUILD_DIR}/evaluate_first_order_rho_run.out: $(EVAL_RHO_OBJS) $(CU_OBJS) $(COMMON_OBJS)
 	echo "EVAL_RHO_OBJS = $(EVAL_RHO_OBJS)"
-	$(NVCC) $(NVCCFLAGS) -o $@ $^
+	$(NVCC) $(NVCCFLAGS) -o $@ $^ $(LDLIBS)
 
 # 编译规则
 ${BUILD_DIR}/%.cpp.o: ${SRC_DIRS}/%.cpp $(HEADERS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# CUDA编译规则
+# CUDA 编译规则
 ${BUILD_DIR}/%.cuo.o: ${SRC_DIRS}/%.cu $(HEADERS)
 	@mkdir -p $(@D)
 	$(NVCC) $(NVCCFLAGS) -c $< -o $@
