@@ -131,7 +131,7 @@ struct DevicePtrs {
 
   // Const Arrays initialized in cpp
   PtrContainer<int> i_valid_batch_2_i_batch;
-  PtrContainer<int> n_point_valid_batches;
+  PtrContainer<int> n_point_valid_mul_3_batches;
   PtrContainer<int> n_compute_c_valid_batches;
   PtrContainer<int> n_compute_c_padding_valid_batches;
   PtrContainer<int> n_compute_c_mul_atom_tile_size_valid_batches;
@@ -139,6 +139,7 @@ struct DevicePtrs {
   PtrContainer<int> work1_batches_ldas;
   PtrContainer<double *> first_order_density_matrix_compute_ptrs;
   PtrContainer<double *> wave_dev_ptrs;
+  PtrContainer<double *> gradient_wave_dev_ptrs;
   PtrContainer<double *> work1_batches_ptrs;
 
   PtrContainer<int> index_lm;

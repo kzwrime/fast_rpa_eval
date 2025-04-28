@@ -142,8 +142,8 @@ __global__ void first_order_rho_ddot(
   TMf64<2> TM_INIT(first_order_rho, n_full_points, atom_tile_size);
   TMf64<4> TM_INIT(first_order_gradient_rho, 3, n_max_batch_size, n_my_batches_work, atom_tile_size);
 
-  const double *work1_ptr = work1_batches_ptr + i_batch_inner * atom_tile_size * n_max_compute_ham * n_max_batch_size;
-  cTMf64<3> TM_INIT(work1, atom_tile_size, n_max_compute_ham, n_points);
+  const double *work1_ptr = work1_batches_ptr + i_batch_inner * atom_tile_size * n_max_compute_ham * 3 * n_max_batch_size;
+  cTMf64<4> TM_INIT(work1, atom_tile_size, n_max_compute_ham, 3, n_points);
 
   // for (int i_point = threadIdx.x; i_point < n_points; i_point += block_size) {
   double acc_grad[3][ATOM_TILE_SIZE] = { 0 };
@@ -152,7 +152,7 @@ __global__ void first_order_rho_ddot(
     for (int j = 0; j < 3; j++) {
       XDEF_UNROLL
       for (int i = 0; i < ATOM_TILE_SIZE; i++) {
-        acc_grad[j][i] += gradient_basis_wave(ic, j, i_point) * work1(i, ic, i_point);
+        acc_grad[j][i] += wave(ic, i_point) * work1(i, ic, j, i_point);
       }
     }
   }
@@ -297,12 +297,12 @@ void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
           MagmaNoTrans,
           MagmaNoTrans,
           &devPs.n_compute_c_mul_atom_tile_size_valid_batches.ptr[i_my_batch_outer],
-          &devPs.n_point_valid_batches.ptr[i_my_batch_outer],
+          &devPs.n_point_valid_mul_3_batches.ptr[i_my_batch_outer],
           &devPs.n_compute_c_valid_batches.ptr[i_my_batch_outer],
           1.0,
           &devPs.first_order_density_matrix_compute_ptrs.ptr[0],
           &devPs.first_order_density_matrix_compute_ldas.ptr[0],
-          &devPs.wave_dev_ptrs.ptr[i_my_batch_outer],
+          &devPs.gradient_wave_dev_ptrs.ptr[i_my_batch_outer],  // gradient_wave_dev_ptrs
           &devPs.n_compute_c_padding_valid_batches.ptr[i_my_batch_outer],
           0.0,
           &devPs.work1_batches_ptrs.ptr[0],

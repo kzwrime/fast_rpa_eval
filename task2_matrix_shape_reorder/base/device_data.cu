@@ -227,9 +227,6 @@ void init_dfpt_device_data(
   // 计算用于 evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ 中
   // magmablas_dgemm_vbatched_max_nocheck 的 ldas/ldbs/ldcs 以及 ptrs
 
-  double *work1_dev = nullptr;
-  DEV_CHECK(DEV_MALLOC((void **)&work1_dev, sizeof(double) * ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size));
-
   Ti32<1> i_valid_batch_2_i_batch(n_my_batches_work + 1);
   Ti32<1> n_point_valid_batches(n_my_batches_work + 1);
   Ti32<1> n_compute_c_valid_batches(n_my_batches_work + 1);

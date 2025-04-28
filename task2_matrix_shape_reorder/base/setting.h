@@ -1,7 +1,7 @@
 #ifndef SETTING_H
 #define SETTING_H
 
-#define N_BATCHES_TILE 256
+#define N_BATCHES_TILE 64
 
 #define N_COMPUTE_C_PADDING_SIZE 4
 

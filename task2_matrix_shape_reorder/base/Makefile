@@ -35,7 +35,7 @@ EVAL_RHO_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(EVAL_RHO_CP
                  $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(EVAL_RHO_CU_SRCS))
 CU_OBJS := $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(CU_SRCS))
 
-HEADERS := $(wildcard ../*.h) $(wildcard ../*.hpp)
+HEADERS := $(wildcard ./*.h) $(wildcard ./*.hpp) $(wildcard ${SRC_DIRS}/*.h) $(wildcard ${SRC_DIRS}/*.hpp)
 
 # 最终目标
 TARGETS := ${BUILD_DIR}/evaluate_first_order_rho_run.out

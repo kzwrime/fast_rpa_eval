@@ -140,8 +140,8 @@ extern "C" void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_(
       // Temp Arrays
       Tf64<3> first_order_density_matrix_compute(ATOM_TILE_SIZE, n_compute_c, n_compute_c);
       Tf64<2> first_order_wave(n_compute_c, n_points);
-      Tf64<3> work1(ATOM_TILE_SIZE, n_compute_c, n_points);
-      Tf64<2> work(n_compute_c, n_points);
+      Tf64<4> work1(ATOM_TILE_SIZE, n_compute_c, 3, n_points);
+      Tf64<3> work(n_compute_c, 3, n_points);
       Tf64<2> local_first_order_rho(n_max_batch_size, ATOM_TILE_SIZE);
 
       // first_order_wave.setZero();
@@ -163,33 +163,33 @@ extern "C" void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_(
           CblasNoTrans,
           CblasNoTrans,
           ATOM_TILE_SIZE * n_compute_c,
-          n_points,
+          3 * n_points,
           n_compute_c,
           1.0,
           first_order_density_matrix_compute.data(),
           ATOM_TILE_SIZE * n_compute_c,
-          wave.data(),
+          gradient_basis_wave.data(),
           n_compute_c_padding,
           0.0,
           work1.data(),
           ATOM_TILE_SIZE * n_compute_c);
 
       for (int i_point = 0; i_point < n_points; i_point++) {
-        double acc[ATOM_TILE_SIZE] = { 0 };
+        // double acc[ATOM_TILE_SIZE] = { 0 };
         double acc_grad[3][ATOM_TILE_SIZE] = { 0 };
         for (int ic = 0; ic < n_compute_c; ic++) {
-          for (int i = 0; i < ATOM_TILE_SIZE; i++) {
-            acc[i] += wave(ic, i_point) * work1(i, ic, i_point);
-          }
+          // for (int i = 0; i < ATOM_TILE_SIZE; i++) {
+          //   acc[i] += wave(ic, i_point) * work1(i, ic, i_point);
+          // }
           for (int j = 0; j < 3; j++) {
             for (int i = 0; i < ATOM_TILE_SIZE; i++) {
-              acc_grad[j][i] += gradient_basis_wave(ic, j, i_point) * work1(i, ic, i_point);
+              acc_grad[j][i] += wave(ic, i_point) * work1(i, ic, j, i_point);
             }
           }
         }
-        for (int i = 0; i < ATOM_TILE_SIZE; i++) {
-          local_first_order_rho(i_point, i) = acc[i] + first_order_rho_bias_part2(i_point, i_my_batch, i);
-        }
+        // for (int i = 0; i < ATOM_TILE_SIZE; i++) {
+        //   local_first_order_rho(i_point, i) = acc[i] + first_order_rho_bias_part2(i_point, i_my_batch, i);
+        // }
         // INFO GGA only
         for (int i = 0; i < ATOM_TILE_SIZE; i++) {
           for (int j = 0; j < 3; j++) {

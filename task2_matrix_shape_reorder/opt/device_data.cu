@@ -200,7 +200,7 @@ void init_dfpt_device_data(
   devPs.density_matrix_compute_batches.size = n_max_compute_ham * n_max_compute_ham * N_BATCHES_TILE;
   devPs.first_order_density_matrix_compute_batches.size =
       ATOM_TILE_SIZE * n_max_compute_ham * n_max_compute_ham * N_BATCHES_TILE;
-  devPs.work1_batches.size = ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size * N_BATCHES_TILE;
+  devPs.work1_batches.size = ATOM_TILE_SIZE * n_max_compute_ham * 3 * n_max_batch_size * N_BATCHES_TILE;
   DEV_CHECK(
       DEV_MALLOC((void **)&devPs.density_matrix_compute_batches.ptr, devPs.density_matrix_compute_batches.byte_size()));
   DEV_CHECK(DEV_MALLOC(
@@ -227,15 +227,13 @@ void init_dfpt_device_data(
   // 计算用于 evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_ 中
   // magmablas_dgemm_vbatched_max_nocheck 的 ldas/ldbs/ldcs 以及 ptrs
 
-  double *work1_dev = nullptr;
-  DEV_CHECK(DEV_MALLOC((void **)&work1_dev, sizeof(double) * ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size));
-
   Ti32<1> i_valid_batch_2_i_batch(n_my_batches_work + 1);
-  Ti32<1> n_point_valid_batches(n_my_batches_work + 1);
+  Ti32<1> n_point_valid_mul_3_batches(n_my_batches_work + 1);
   Ti32<1> n_compute_c_valid_batches(n_my_batches_work + 1);
   Ti32<1> n_compute_c_padding_valid_batches(ALIGN_UP(n_my_batches_work, N_BATCHES_TILE) + N_BATCHES_TILE + 1);
   Ti32<1> n_compute_c_mul_atom_tile_size_valid_batches(n_my_batches_work + 1);
   ETT<double *, 1> wave_dev_ptrs(n_my_batches_work);
+  ETT<double *, 1> gradient_wave_dev_ptrs(n_my_batches_work);
 
   ETT<double *, 1> first_order_density_matrix_compute_ptrs(N_BATCHES_TILE);
   ETT<double *, 1> work1_batches_ptrs(N_BATCHES_TILE);
@@ -249,13 +247,13 @@ void init_dfpt_device_data(
 
     if (n_compute_c > 0) {
       i_valid_batch_2_i_batch(i_valid_batch) = i_batch;
-      n_point_valid_batches(i_valid_batch) = n_point_batches_ptr[i_batch];
+      n_point_valid_mul_3_batches(i_valid_batch) = 3 * n_point_batches_ptr[i_batch]; // * 3
       n_compute_c_valid_batches(i_valid_batch) = n_compute_c;
       n_compute_c_padding_valid_batches(i_valid_batch) = n_compute_c_padding;
       n_compute_c_mul_atom_tile_size_valid_batches(i_valid_batch) = n_compute_c * ATOM_TILE_SIZE;
 
       wave_dev_ptrs(i_valid_batch) = &devPs.wave_batches_compress.ptr[i_batch_2_wave_offset_ptr[i_batch]];
-
+      gradient_wave_dev_ptrs(i_valid_batch) = &devPs.gradient_wave_batches_compress.ptr[3 * i_batch_2_wave_offset_ptr[i_batch]];
       i_valid_batch++;
     }
   }
@@ -273,7 +271,7 @@ void init_dfpt_device_data(
     int max_k = 0;
     for (int i_batch_inner = 0; i_batch_inner < real_n_batches_tile; i_batch_inner++) {
       max_m = std::max(max_m, n_compute_c_mul_atom_tile_size_valid_batches(i_my_batch_outer + i_batch_inner));
-      max_n = std::max(max_n, n_point_valid_batches(i_my_batch_outer + i_batch_inner));
+      max_n = std::max(max_n, n_point_valid_mul_3_batches(i_my_batch_outer + i_batch_inner));
       max_k = std::max(max_k, n_compute_c_valid_batches(i_my_batch_outer + i_batch_inner));
     }
     host_first_order_rho_data.work1_max_m(i_my_batch_outer / N_BATCHES_TILE) = max_m;
@@ -284,14 +282,14 @@ void init_dfpt_device_data(
   for (int i = 0; i < N_BATCHES_TILE; i++) {
     first_order_density_matrix_compute_ptrs(i) = &devPs.first_order_density_matrix_compute_batches
                                                       .ptr[ATOM_TILE_SIZE * n_max_compute_ham * n_max_compute_ham * i];
-    work1_batches_ptrs(i) = &devPs.work1_batches.ptr[ATOM_TILE_SIZE * n_max_compute_ham * n_max_batch_size * i];
+    work1_batches_ptrs(i) = &devPs.work1_batches.ptr[ATOM_TILE_SIZE * n_max_compute_ham * 3 * n_max_batch_size * i];
 
     first_order_density_matrix_compute_ldas(i) = ATOM_TILE_SIZE * n_max_compute_ham;
     work1_batches_ldas(i) = ATOM_TILE_SIZE * n_max_compute_ham;
   }
 
   TM_DEV_PS_INIT(i_valid_batch_2_i_batch);
-  TM_DEV_PS_INIT(n_point_valid_batches);
+  TM_DEV_PS_INIT(n_point_valid_mul_3_batches);
   TM_DEV_PS_INIT(n_compute_c_valid_batches);
   TM_DEV_PS_INIT(n_compute_c_padding_valid_batches);
   TM_DEV_PS_INIT(n_compute_c_mul_atom_tile_size_valid_batches);
@@ -300,6 +298,7 @@ void init_dfpt_device_data(
 
   TM_DEV_PS_INIT(first_order_density_matrix_compute_ptrs);
   TM_DEV_PS_INIT(wave_dev_ptrs);
+  TM_DEV_PS_INIT(gradient_wave_dev_ptrs);
   TM_DEV_PS_INIT(work1_batches_ptrs);
 
   Ti32<2> index_lm(l_pot_max * 2 + 1, l_pot_max + 1); // index_lm(-l_pot_max:l_pot_max, 0:l_pot_max )
@@ -350,7 +349,7 @@ void init_dfpt_device_data(
 
   // Const Arrays initialized in cpp
   TM_DEV_PS_H2D_H(i_valid_batch_2_i_batch);
-  TM_DEV_PS_H2D_H(n_point_valid_batches);
+  TM_DEV_PS_H2D_H(n_point_valid_mul_3_batches);
   TM_DEV_PS_H2D_H(n_compute_c_valid_batches);
   TM_DEV_PS_H2D_H(n_compute_c_padding_valid_batches);
   TM_DEV_PS_H2D_H(n_compute_c_mul_atom_tile_size_valid_batches);
@@ -358,6 +357,7 @@ void init_dfpt_device_data(
   TM_DEV_PS_H2D_H(work1_batches_ldas);
   TM_DEV_PS_H2D_H(first_order_density_matrix_compute_ptrs);
   TM_DEV_PS_H2D_H(wave_dev_ptrs);
+  TM_DEV_PS_H2D_H(gradient_wave_dev_ptrs);
   TM_DEV_PS_H2D_H(work1_batches_ptrs);
 
   TM_DEV_PS_H2D_H(index_lm);
@@ -413,7 +413,7 @@ void free_dfpt_device_data() {
 
   // Const Arrays initialized in cpp
   TM_DEV_PS_FREE(i_valid_batch_2_i_batch);
-  TM_DEV_PS_FREE(n_point_valid_batches);
+  TM_DEV_PS_FREE(n_point_valid_mul_3_batches);
   TM_DEV_PS_FREE(n_compute_c_valid_batches);
   TM_DEV_PS_FREE(n_compute_c_padding_valid_batches);
   TM_DEV_PS_FREE(n_compute_c_mul_atom_tile_size_valid_batches);
@@ -421,6 +421,7 @@ void free_dfpt_device_data() {
   TM_DEV_PS_FREE(work1_batches_ldas);
   TM_DEV_PS_FREE(first_order_density_matrix_compute_ptrs);
   TM_DEV_PS_FREE(wave_dev_ptrs);
+  TM_DEV_PS_FREE(gradient_wave_dev_ptrs);
   TM_DEV_PS_FREE(work1_batches_ptrs);
 
   TM_DEV_PS_FREE(index_lm);
