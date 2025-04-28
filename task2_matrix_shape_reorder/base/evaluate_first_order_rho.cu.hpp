@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cblas.h>
 #include <vector>
 
@@ -7,12 +9,10 @@
 #include "device.hpp"
 #include "pass_mod_var.h"
 
-#include "evaluate_first_order_rho_direct_test.hpp"
-
 #include "device_data.hpp"
 
 constexpr bool enable_profile_rho_each_kernel = false;
-constexpr bool enable_profile_rho_end_to_end = true;
+constexpr bool enable_profile_rho_end_to_end = false;
 
 #define ALL_KERNELS_ON_GPU
 
@@ -142,23 +142,12 @@ __global__ void first_order_rho_ddot(
   TMf64<2> TM_INIT(first_order_rho, n_full_points, atom_tile_size);
   TMf64<4> TM_INIT(first_order_gradient_rho, 3, n_max_batch_size, n_my_batches_work, atom_tile_size);
 
-  int i_valid_point_start = n_point_batches_prefix_sum_ptr[i_my_batch];
-  const int *i_full_points_map_ptr = &i_valid_point_2_i_full_points_map_ptr[i_valid_point_start];
-  cTMi32<1> TM_INIT(i_full_points_map, n_points);
-
-  // TODO work1 有 n_batch_tile 份，目前测试时只有 1 份
-
   const double *work1_ptr = work1_batches_ptr + i_batch_inner * atom_tile_size * n_max_compute_ham * n_max_batch_size;
   cTMf64<3> TM_INIT(work1, atom_tile_size, n_max_compute_ham, n_points);
 
   // for (int i_point = threadIdx.x; i_point < n_points; i_point += block_size) {
-  double acc[ATOM_TILE_SIZE] = { 0 };
   double acc_grad[3][ATOM_TILE_SIZE] = { 0 };
   for (int ic = 0; ic < n_compute_c; ic++) {
-    XDEF_UNROLL
-    for (int i = 0; i < ATOM_TILE_SIZE; i++) {
-      acc[i] += wave(ic, i_point) * work1(i, ic, i_point);
-    }
     XDEF_UNROLL
     for (int j = 0; j < 3; j++) {
       XDEF_UNROLL
@@ -176,16 +165,12 @@ __global__ void first_order_rho_ddot(
           acc_grad[j][i] * 2 - first_order_gradient_rho_bias_batches_atoms(j, i_point, i_my_batch, i);
     }
   }
-
-  XDEF_UNROLL
-  for (int i = 0; i < atom_tile_size; i++) {
-    first_order_rho(i_full_points_map(i_point), i) = acc[i] + first_order_rho_bias_part2(i_point, i_my_batch, i);
-  }
   // }
   // }
 }
 
-extern "C" void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
+template <bool enable_profile_rho_end_to_end = false>
+void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_host_(
     // scalars
     int *n_my_batches_work_,
     int *j_atom_begin_,
@@ -242,8 +227,8 @@ extern "C" void evaluate_first_order_rho_reduce_memory_c_v3_batches_atoms_cu_hos
   // global arrays
   TMf64<2> TM_INIT(density_matrix, n_basis, n_basis);
 
-  first_order_rho.setZero();
-  first_order_gradient_rho.setZero();
+  // first_order_rho.setZero();
+  // first_order_gradient_rho.setZero();
 
   DEV_STREAM_T &stream = devInfo.stream;
   magma_queue_t &magma_queue = devInfo.magma_queue;

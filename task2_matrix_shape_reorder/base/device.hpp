@@ -156,12 +156,13 @@ public:
   inline void synchronize() {
     DEV_CHECK(DEV_EVENT_SYNCHRONIZE(cu_stop));
   }
-  inline void elapsed_time(const std::string &info) {
+  inline float elapsed_time(const std::string &info) {
     DEV_CHECK(DEV_EVENT_RECORD(cu_stop, stream));
     DEV_CHECK(DEV_EVENT_SYNCHRONIZE(cu_stop));
     float milliseconds = 0;
     DEV_CHECK(DEV_EVENT_ELAPSED_TIME(&milliseconds, cu_start, cu_stop));
     printf("%s: %f ms\n", info.c_str(), milliseconds);
+    return milliseconds;
   }
 };
 
@@ -182,7 +183,8 @@ public:
   }
   inline void synchronize() {
   }
-  inline void elapsed_time(const std::string &info) {
+  inline float elapsed_time(const std::string &info) {
+    return 0;
   }
 };
 
