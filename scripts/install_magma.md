@@ -26,11 +26,12 @@ cmake .. -DMAGMA_ENABLE_HIP=ON -DCMAKE_INSTALL_PREFIX=${FR_PROJECT_HOME}/third_p
 
 # Alternative Method
 # If cmake or make failed on your AMDGPU machine, you can use Makefile
+# export ... # as above
+# cd ${FR_PROJECT_HOME}/third_party/magma-2.9.0
 # cp make.inc-examples/make.inc.hip-gcc-mkl make.inc
-# modify make.inc-examples/make.inc.hip-gcc-mkl "-lmkl_gnu_thread" to "-lmkl_sequential"
-# then
+# sed -i 's/-lmkl_gnu_thread/-lmkl_sequential/g' make.inc
 # make lib -j${N_JOBS}
-# make install prefix=${FR_PROJECT_HOME}/third_party/local
+# make install prefix=${FR_PROJECT_HOME}/third_party/local -j${N_JOBS}
 
 # ================================================
 

@@ -11,13 +11,21 @@ git lfs install
 git clone https://github.com/kzwrime/fast_rpa_eval
 ```
 
+Or
+
+```bash
+GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/kzwrime/fast_rpa_eval
+cd fast_rpa_eval
+git lfs pull
+```
+
 Or download ZIP directly.
 
 # Evaluation Setup
 
 Description of the hardware and software environment:
 
-The experiments described in the paper were tested on the **Hygon Z100 GPU** in the **ORISE supercomputer**. A similar environment would be the AMDGPU MI50/60.
+The experiments described in the paper were tested on the **Hygon Z100 GPU** in the **ORISE supercomputer**, using DTK suite (base on ROCM).
 
 However, this project supports both **NVIDIA CUDA** and **AMD ROCM HIP**, so testing can be conducted on either NVIDIA or AMD GPUs, which can reflect the effect of the experiment. But the data may be obviously different with the difference of hardware environment.
 
@@ -27,12 +35,14 @@ This experiment has been tested in the following compiler environments:
 
 - GNU Compiler: 9.4.0
 - CUDA: 12.4
-- ROCM: 5.7
+- or ROCM: 5.7
+- or DTK: 24.04
 
 # Recommended Hardware Environment
 
-- NVIDIA A100
-- AMDGPU MI50/MI60
+- NVIDIA A100 (Tested)
+- or AMDGPU MI50/MI60
+- or Hygon Z100 GPU (Tested)
 
 ## Third-Party Library Dependencies
 
