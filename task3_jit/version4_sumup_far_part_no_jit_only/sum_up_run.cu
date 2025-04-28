@@ -2,16 +2,16 @@
 int __mpi_tasks_MOD_n_tasks = 1;
 int __mpi_tasks_MOD_myid = 0;
 
-#include "../common.hpp"
-#include "../device.hpp"
-#include "../device_data.hpp"
-#include "../setting.h"
+#include "common.hpp"
+#include "device.hpp"
+#include "device_data.hpp"
+#include "setting.h"
 
-#include "../evaluate_first_order_rho_direct_test.hpp"
-#include "../sum_up_direct_test.hpp"
-#include "../sum_up_whole_potential.h"
+#include "evaluate_first_order_rho_direct_test.hpp"
+#include "sum_up_direct_test.hpp"
+#include "sum_up_whole_potential.h"
 
-void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData &rho_data) {
+float call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData &rho_data, const char *base_path) {
 
   printf("%d %d\n", sumup_data.n_full_points, (int)sumup_data.partition_tab.size());
   // printf("%d %d\n", sumup_data.n_full_points, (int)sumup_data.delta_v_hartree.size());
@@ -54,14 +54,14 @@ void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData
   }
 
   printf("\n");
-  printf("index_cc[?, 2:6]\n");
-  for (int i = 0; i < sumup_data.index_cc_dim_0; i++) {
-    printf("%3d: ", i);
-    for (int j = 2; j < 6; j++) {
-      printf("%3d, ", sumup_data.index_cc[i + j * sumup_data.index_cc_dim_0]);
-    }
-    printf("\n");
-  }
+  // printf("index_cc[?, 2:6]\n");
+  // for (int i = 0; i < sumup_data.index_cc_dim_0; i++) {
+  //   printf("%3d: ", i);
+  //   for (int j = 2; j < 6; j++) {
+  //     printf("%3d, ", sumup_data.index_cc[i + j * sumup_data.index_cc_dim_0]);
+  //   }
+  //   printf("\n");
+  // }
 
   sum_up_whole_potential_c_v3_atoms_full_points_j_atom_tile_(
       &sumup_data.j_atom_begin,
@@ -168,6 +168,8 @@ void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData
 
       delta_v_hartree_ref.data());
 
+  DEV_STREAM_T &stream = devInfo.stream;
+
   sum_up_whole_potential_c_v3_atoms_full_points_j_atom_tile_cu_host_(
       sumup_data.j_atom_begin,
       sumup_data.j_atom_end,
@@ -269,6 +271,10 @@ void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData
   printf("Warm up finished.\n");
 
   printf("Start running...\n");
+
+  EventHelper<true> event_helper_all(stream);
+  event_helper_all.record_start();
+
   int run_iters = 10;
   for (int iter = 0; iter < run_iters; iter++) {
     sum_up_whole_potential_c_v3_atoms_full_points_j_atom_tile_cu_host_(
@@ -312,38 +318,57 @@ void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData
         sumup_data.partition_tab.empty() ? nullptr : sumup_data.partition_tab.data(),
         delta_v_hartree.data());
   }
+
+  float milliseconds = event_helper_all.elapsed_time("Run evaluate_first_order_gradient_rho finished.");
+  printf("Run %s evaluate_first_order_gradient_rho avg time (ms): %f\n", base_path, milliseconds / run_iters);
+
+  printf("Run finished.\n");
+  free_dfpt_device_data();
+
+  return milliseconds / run_iters;
+}
+
+float run(const char *base_path, int n_proc) {
+  try {
+    char sumup_data_path[1024];
+    char rho_data_path[1024];
+
+    sprintf(sumup_data_path, "%s/sumup.test.nproc_%d.bin", base_path, n_proc);
+    sprintf(rho_data_path, "%s/first_order_rho.meta.test.nproc_%d.bin", base_path, n_proc);
+
+    HartreePotentialData read_sumup_data = read_hartree_potential_data(sumup_data_path);
+    FirstOrderRhoMetaData read_rho_data = read_first_order_rho_meta_data(rho_data_path);
+
+    return call_with_read_data(read_sumup_data, read_rho_data, base_path);
+  } catch (const std::exception &e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    exit(1);
+  }
 }
 
 int main() {
 
   init_dfpt_device_info();
 
-  try {
-    char sumup_data_path[1024];
-    char rho_data_path[1024];
+  int n_proc = 4;
 
-    // char base_path[] = "../../../../dev_tests/water2_rpa_6_atoms";
-    // char base_path[] = "../../../../dev_tests/22_rpa_22_atoms";
-    char base_path[] = "../../../../dev_tests/61_rpa_36_atoms";
-    int n_proc = 2;
+  float time_18 = run("../../fragment_save_bin/case_18", n_proc);
+  float time_20 = run("../../fragment_save_bin/case_20", n_proc);
+  float time_22 = run("../../fragment_save_bin/case_22", n_proc);
+  float time_24 = run("../../fragment_save_bin/case_24", n_proc);
+  float time_26 = run("../../fragment_save_bin/case_26", n_proc);
+  float time_28 = run("../../fragment_save_bin/case_28", n_proc);
+  float time_30 = run("../../fragment_save_bin/case_30", n_proc);
+  float time_32 = run("../../fragment_save_bin/case_32", n_proc);
 
-    sprintf(sumup_data_path, "%s/sumup.test.nproc_%d.bin", base_path, n_proc);
-    sprintf(rho_data_path, "%s/first_order_rho.meta.test.nproc_%d.bin", base_path, n_proc);
-
-    // 3. Read sumup_data back from file
-    HartreePotentialData read_sumup_data = read_hartree_potential_data(sumup_data_path);
-
-    FirstOrderRhoMetaData read_rho_data = read_first_order_rho_meta_data(rho_data_path);
-
-    // TODO 检查公共部分是否一致
-
-    // 4. Call the original function with the read sumup_data
-    call_with_read_data(read_sumup_data, read_rho_data);
-
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    return 1;
-  }
+  printf("[[Result]], %d, %d, case_18, %f\n", int(ATOM_TILE_SIZE), n_proc, time_18);
+  printf("[[Result]], %d, %d, case_20, %f\n", int(ATOM_TILE_SIZE), n_proc, time_20);
+  printf("[[Result]], %d, %d, case_22, %f\n", int(ATOM_TILE_SIZE), n_proc, time_22);
+  printf("[[Result]], %d, %d, case_24, %f\n", int(ATOM_TILE_SIZE), n_proc, time_24);
+  printf("[[Result]], %d, %d, case_26, %f\n", int(ATOM_TILE_SIZE), n_proc, time_26);
+  printf("[[Result]], %d, %d, case_28, %f\n", int(ATOM_TILE_SIZE), n_proc, time_28);
+  printf("[[Result]], %d, %d, case_30, %f\n", int(ATOM_TILE_SIZE), n_proc, time_30);
+  printf("[[Result]], %d, %d, case_32, %f\n", int(ATOM_TILE_SIZE), n_proc, time_32);
 
   free_dfpt_device_info();
 

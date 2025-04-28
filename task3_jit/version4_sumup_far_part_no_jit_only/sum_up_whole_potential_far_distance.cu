@@ -13,8 +13,8 @@
 
 #include "sheval.hpp"
 
-constexpr bool enable_profile_sumup_each_kernel = true;
-constexpr bool enable_profile_sumup_end_to_end = true;
+constexpr bool enable_profile_sumup_each_kernel = false;
+constexpr bool enable_profile_sumup_end_to_end = false;
 
 __device__ double spline_vector_v2_n2_c_fused_ddot_cu(
     double r_output,

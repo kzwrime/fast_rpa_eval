@@ -30,14 +30,16 @@ BUILD_DIR := ./build
 
 # 源文件和头文件
 COMMON_SRCS := 
-SUM_UP_SRCS := 
-EVAL_RHO_CPP_SRCS := ${SRC_DIRS}/evaluate_first_order_rho.cpp
-EVAL_RHO_CU_SRCS := ${SRC_DIRS}/evaluate_first_order_rho_run.cu
-CU_SRCS := ${SRC_DIRS}/device.cu ${SRC_DIRS}/device_data.cu
+SUM_UP_CPP_SRCS := ${SRC_DIRS}/sum_up_whole_potential_far_distance.cpp
+SUM_UP_CU_SRCS := ${SRC_DIRS}/sum_up_run.cu 
+EVAL_RHO_CPP_SRCS := 
+EVAL_RHO_CU_SRCS := 
+CU_SRCS := ${SRC_DIRS}/sum_up_whole_potential_far_distance.cu ${SRC_DIRS}/device.cu ${SRC_DIRS}/device_data.cu
 
 # 目标文件路径设置
 COMMON_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(COMMON_SRCS))
-SUM_UP_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(SUM_UP_SRCS))
+SUM_UP_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(SUM_UP_CPP_SRCS)) \
+               $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(SUM_UP_CU_SRCS))
 EVAL_RHO_OBJS := $(patsubst ${SRC_DIRS}/%.cpp,${BUILD_DIR}/%.cpp.o,$(EVAL_RHO_CPP_SRCS)) \
                  $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(EVAL_RHO_CU_SRCS))
 CU_OBJS := $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(CU_SRCS))
@@ -45,7 +47,7 @@ CU_OBJS := $(patsubst ${SRC_DIRS}/%.cu,${BUILD_DIR}/%.cuo.o,$(CU_SRCS))
 HEADERS := $(wildcard ./*.h) $(wildcard ./*.hpp) $(wildcard ${SRC_DIRS}/*.h) $(wildcard ${SRC_DIRS}/*.hpp)
 
 # 最终目标
-TARGETS := ${BUILD_DIR}/evaluate_first_order_rho_run.out
+TARGETS := ${BUILD_DIR}/sum_up.out
 
 # 默认目标
 all: prepare_build $(TARGETS)
