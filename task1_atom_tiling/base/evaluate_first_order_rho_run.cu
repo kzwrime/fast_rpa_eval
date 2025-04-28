@@ -199,25 +199,25 @@ float call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaDat
       density_matrix.data());
 
   // Verification
-  // TM_DEV_PS_D2H_H(first_order_rho);
+  TM_DEV_PS_D2H_H(first_order_rho);
   TM_DEV_PS_D2H_H(first_order_gradient_rho);
 
   int failed_count = 0;
-  // for (int i = 0; i < rho_data.n_full_points; i++) {
-  //   if (std::abs(first_order_rho.data()[i] - first_order_rho_ref.data()[i]) > 1E-6) {
-  //     failed_count++;
-  //     printf(
-  //         "first_order_rho error! i_full_point %9d, %.18f != %.18f\n",
-  //         i,
-  //         first_order_rho.data()[i],
-  //         first_order_rho_ref.data()[i]);
-  //   }
-  //   if (failed_count > 10) {
-  //     printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
-  //     break;
-  //   }
-  // }
-  // printf("Check first_order_rho finished.\n");
+  for (int i = 0; i < rho_data.n_full_points; i++) {
+    if (std::abs(first_order_rho.data()[i] - first_order_rho_ref.data()[i]) > 1E-6) {
+      failed_count++;
+      printf(
+          "first_order_rho error! i_full_point %9d, %.18f != %.18f\n",
+          i,
+          first_order_rho.data()[i],
+          first_order_rho_ref.data()[i]);
+    }
+    if (failed_count > 10) {
+      printf("Failed to many times (failed_count > %d), exit.\n", failed_count);
+      break;
+    }
+  }
+  printf("Check first_order_rho finished.\n");
 
   for (int i = 0; i < rho_data.n_full_points; i++) {
     if (std::abs(first_order_gradient_rho.data()[i] - first_order_gradient_rho_ref.data()[i]) > 1E-6) {
