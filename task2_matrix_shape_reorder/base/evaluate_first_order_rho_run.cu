@@ -11,7 +11,7 @@ int __mpi_tasks_MOD_myid = 0;
 
 #include "sum_up_direct_test.hpp"
 
-void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData &rho_data) {
+float call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData &rho_data, const char *base_path) {
 
   int j_atom_begin_ = 1;
   int j_atom_end_ = j_atom_begin_ + ATOM_TILE_SIZE - 1;
@@ -311,13 +311,15 @@ void call_with_read_data(HartreePotentialData &sumup_data, FirstOrderRhoMetaData
   }
 
   float milliseconds = event_helper_all.elapsed_time("Run evaluate_first_order_gradient_rho finished.");
-  printf("Run evaluate_first_order_gradient_rho avg time (ms): %f\n", milliseconds / run_iters);
+  printf("Run %s evaluate_first_order_gradient_rho avg time (ms): %f\n", base_path, milliseconds / run_iters);
 
   printf("Run finished.\n");
   free_dfpt_device_data();
+
+  return milliseconds / run_iters;
 }
 
-void run(const char *base_path, int n_proc) {
+float run(const char *base_path, int n_proc) {
   try {
     char sumup_data_path[1024];
     char rho_data_path[1024];
@@ -328,9 +330,10 @@ void run(const char *base_path, int n_proc) {
     HartreePotentialData read_sumup_data = read_hartree_potential_data(sumup_data_path);
     FirstOrderRhoMetaData read_rho_data = read_first_order_rho_meta_data(rho_data_path);
 
-    call_with_read_data(read_sumup_data, read_rho_data);
+    return call_with_read_data(read_sumup_data, read_rho_data, base_path);
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << std::endl;
+    exit(1);
   }
 }
 
@@ -338,14 +341,23 @@ int main() {
 
   init_dfpt_device_info();
 
-  run("../../fragment_save_bin/case_18", 4);
-  // run("../../fragment_save_bin/case_20", 4);
-  // run("../../fragment_save_bin/case_22", 4);
-  // run("../../fragment_save_bin/case_24", 4);
-  // run("../../fragment_save_bin/case_26", 4);
-  // run("../../fragment_save_bin/case_28", 4);
-  // run("../fragment_save_bin/case_30", 4);
-  // run("../fragment_save_bin/case_32", 4);
+  float time_18 = run("../../fragment_save_bin/case_18", 4);
+  float time_20 = run("../../fragment_save_bin/case_20", 4);
+  float time_22 = run("../../fragment_save_bin/case_22", 4);
+  float time_24 = run("../../fragment_save_bin/case_24", 4);
+  float time_26 = run("../../fragment_save_bin/case_26", 4);
+  float time_28 = run("../../fragment_save_bin/case_28", 4);
+  float time_30 = run("../../fragment_save_bin/case_30", 4);
+  float time_32 = run("../../fragment_save_bin/case_32", 4);
+
+  printf("[[Result]], case_18, %f\n", time_18);
+  printf("[[Result]], case_20, %f\n", time_20);
+  printf("[[Result]], case_22, %f\n", time_22);
+  printf("[[Result]], case_24, %f\n", time_24);
+  printf("[[Result]], case_26, %f\n", time_26);
+  printf("[[Result]], case_28, %f\n", time_28);
+  printf("[[Result]], case_30, %f\n", time_30);
+  printf("[[Result]], case_32, %f\n", time_32);
 
   free_dfpt_device_info();
 
