@@ -1,17 +1,18 @@
 # 编译器设置
-CXX := g++
-NVCC := nvcc
+CXX := $(CXX)
+NVCC := $(NVCC)
 
 CXXFLAGS := -std=c++17 -O3 -g -DDIRECT_TEST=1 -DATOM_TILE_SIZE=4 -lmagma -lmkl_gf_lp64 -lmkl_sequential -lmkl_core
 
 # 根据 NVCC 是否包含 nvcc，选择启用 CUDA 或 HIP 宏
 ifeq ($(findstring nvcc,$(NVCC)),nvcc)
   CXXFLAGS += -D_DFPT_ENABLE_CUDA_
+  NVCCFLAGS := $(CXXFLAGS) --expt-relaxed-constexpr --compiler-options -fPIC
 else
   CXXFLAGS += -D_DFPT_ENABLE_HIP_
+  NVCCFLAGS := $(CXXFLAGS) -fPIC
 endif
 
-NVCCFLAGS := $(CXXFLAGS) --expt-relaxed-constexpr --compiler-options -fPIC
 
 # 包含路径
 INCLUDE_DIRS := ../../third_party/local/include ../../third_party/local/include/eigen3
