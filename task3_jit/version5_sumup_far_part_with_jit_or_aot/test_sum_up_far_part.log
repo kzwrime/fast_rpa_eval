@@ -4,7 +4,7 @@ Initializing device info..., using device 0
 % CUDA runtime 12040, driver 12070. OpenMP threads 80. MKL 2025.0.0, MKL threads 1. 
 % device 0: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
 % device 1: NVIDIA A100-PCIE-40GB, 1410.0 MHz clock, 40444.4 MiB memory, capability 8.0
-% Mon Apr 28 20:27:57 2025
+% Mon Apr 28 22:55:45 2025
 MAGMA is using device: 0
 j_atom_begin = 1
 j_atom_end = 4
@@ -41,7 +41,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 37.662720 ms
+Run sum_up_whole_potential_far_distance finished.: 33.628159 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -78,7 +78,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 25.383936 ms
+Run sum_up_whole_potential_far_distance finished.: 23.737345 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -115,7 +115,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 22.264832 ms
+Run sum_up_whole_potential_far_distance finished.: 22.127617 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -152,7 +152,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 27.458561 ms
+Run sum_up_whole_potential_far_distance finished.: 27.697151 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -189,7 +189,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 30.477312 ms
+Run sum_up_whole_potential_far_distance finished.: 30.464001 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -226,7 +226,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 37.412865 ms
+Run sum_up_whole_potential_far_distance finished.: 32.621567 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -263,7 +263,7 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 50.511871 ms
+Run sum_up_whole_potential_far_distance finished.: 49.173504 ms
 Run finished.
 j_atom_begin = 1
 j_atom_end = 4
@@ -300,13 +300,13 @@ n_cc_lm_ijk[0:l_pot_max+1]
 Check delta_v_hartree finished.
 Warm up finished.
 Start running...
-Run sum_up_whole_potential_far_distance finished.: 46.166016 ms
+Run sum_up_whole_potential_far_distance finished.: 58.222591 ms
 Run finished.
-[[Result]], 4, 4, case_18, 37.662720
-[[Result]], 4, 4, case_20, 25.383936
-[[Result]], 4, 4, case_22, 22.264832
-[[Result]], 4, 4, case_24, 27.458561
-[[Result]], 4, 4, case_26, 30.477312
-[[Result]], 4, 4, case_28, 37.412865
-[[Result]], 4, 4, case_30, 50.511871
-[[Result]], 4, 4, case_32, 46.166016
+[[Result]], 4, 4, case_18, 33.628159
+[[Result]], 4, 4, case_20, 23.737345
+[[Result]], 4, 4, case_22, 22.127617
+[[Result]], 4, 4, case_24, 27.697151
+[[Result]], 4, 4, case_26, 30.464001
+[[Result]], 4, 4, case_28, 32.621567
+[[Result]], 4, 4, case_30, 49.173504
+[[Result]], 4, 4, case_32, 58.222591
